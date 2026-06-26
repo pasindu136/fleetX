@@ -1,0 +1,335 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description"
+        content="FleetX — Sri Lanka's premium digital taxi service. Book city rides, VIP sedans, and outstation trips with fixed fares and real-time tracking.">
+    <title>FleetX | Premium Passenger Transit · Sri Lanka</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="../css/style.css">
+</head>
+
+<body>
+
+    <!-- PAGE LOADER -->
+    <div class="page-loader" id="pageLoader">
+        <div class="loader-spinner"></div>
+        <div class="loader-text">Connecting Terminal...</div>
+    </div>
+
+    <!-- HEADER -->
+    <header id="mainHeader">
+        <a href="index.html" class="logo" style="display: flex; align-items: center; gap: 10px; text-decoration: none;">
+            <img src="../img/hed-logo.png" alt="FleetX Logo" style="height: 35px; width: auto; object-fit: contain;">
+            FLEET<span>X</span>
+        </a>
+        <nav>
+            <ul>
+                <li><a href="#" class="active">Home</a></li>
+                <li><a href="booking.html">Services</a></li>
+                <li><a href="#how-it-works">How It Works</a></li>
+                <li><a href="about.html">About</a></li>
+                <li id="navAuthArea"></li>
+            </ul>
+        </nav>
+    </header>
+
+    <!-- HERO SECTION -->
+    <section class="hero-wrapper">
+        <div class="hero-bg-overlay"></div>
+        <div class="hero-glow"></div>
+
+        <div class="hero-content">
+            <div class="hero-badge">
+                <i class="fas fa-circle" style="font-size: 8px; color: var(--success);"></i>
+                Sri Lanka's #1 Premium Taxi Platform
+            </div>
+            <h1>SMARTER RIDES.<br>FIXED FARES.<br><span class="accent-text">ZERO SURPRISES.</span></h1>
+            <p>From everyday city hatchbacks to high-end luxury sedans and outstation vans — experience safe,
+                transparent, and premium travel nationwide.</p>
+            <div class="hero-btn-group">
+                <a href="booking.html" class="btn-primary"
+                    style="font-size: 14px; padding: 14px 30px; text-decoration:none; display:inline-flex; align-items:center; gap:8px;">
+                    <i class="fas fa-bolt"></i> Book Your Ride
+                </a>
+                <button class="btn-secondary"
+                    onclick="document.getElementById('services').scrollIntoView({behavior:'smooth'});"
+                    style="font-size: 14px; padding: 14px 28px;">
+                    Explore Fleet <i class="fas fa-arrow-right" style="margin-left: 8px; font-size: 11px;"></i>
+                </button>
+            </div>
+        </div>
+
+        <div class="hero-scroll-hint">
+            <span>Scroll</span>
+            <div class="scroll-mouse"></div>
+        </div>
+    </section>
+
+    <!-- STATS BAR -->
+    <section class="stats-bar">
+        <div class="stat-item reveal">
+            <h3 id="statCommutes">0k+</h3>
+            <p>Successful Commutes</p>
+        </div>
+        <div class="stat-item reveal reveal-delay-1"
+            style="border-left: 1px solid var(--border); border-right: 1px solid var(--border); padding: 0 60px;">
+            <h3>4.9<span style="font-size: 1.8rem;">/5</span></h3>
+            <p>Passenger Rating</p>
+        </div>
+        <div class="stat-item reveal reveal-delay-2">
+            <h3>100%</h3>
+            <p>Tracked Rides</p>
+        </div>
+    </section>
+
+    <!-- SERVICES SECTION -->
+    <section id="services" class="services-section">
+        <div class="section-title reveal">
+            <div class="section-label">Our Specializations</div>
+            <h2>PREMIUM <span>FLEET SERVICES</span></h2>
+            <p>Whether you need a quick city hop or a long outstation journey, we've got the perfect vehicle for every
+                trip.</p>
+        </div>
+
+        <div class="services-grid">
+            <div class="service-card reveal reveal-delay-1">
+                <div class="service-icon"><i class="fas fa-car"></i></div>
+                <h3>City Ride</h3>
+                <p>Affordable, quick, and reliable everyday transport. Get matched instantly with budget cars and
+                    standard sedans for fast city cross-travel.</p>
+                <div
+                    style="margin-top: 24px; display: flex; align-items: center; gap: 8px; color: var(--text-dim); font-size: 13px;">
+                    <i class="fas fa-tag" style="color: var(--accent);"></i> From LKR 150 base fare
+                </div>
+            </div>
+            <div class="service-card reveal reveal-delay-2">
+                <div class="service-icon"><i class="fas fa-car-side"></i></div>
+                <h3>FleetX Prime</h3>
+                <p>Luxury sedans and premium SUVs driven by elite executive chauffeurs. Tailored specifically for
+                    corporate transits, VIP events, and weddings.</p>
+                <div
+                    style="margin-top: 24px; display: flex; align-items: center; gap: 8px; color: var(--text-dim); font-size: 13px;">
+                    <i class="fas fa-crown" style="color: var(--accent);"></i> Executive class experience
+                </div>
+            </div>
+            <div class="service-card reveal reveal-delay-3">
+                <div class="service-icon"><i class="fas fa-route"></i></div>
+                <h3>Outstation Drop</h3>
+                <p>Dedicated long-distance transit across Sri Lanka. Cruise comfortably on highways in roomy luxury cars
+                    or family vans for a single flat fare.</p>
+                <div
+                    style="margin-top: 24px; display: flex; align-items: center; gap: 8px; color: var(--text-dim); font-size: 13px;">
+                    <i class="fas fa-road" style="color: var(--accent);"></i> Island-wide coverage
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- HOW IT WORKS -->
+    <section id="how-it-works" class="hiw-section">
+        <div class="section-title reveal">
+            <div class="section-label">Simple Process</div>
+            <h2>HOW IT <span>WORKS</span></h2>
+            <p>Four simple steps to get you from point A to B — seamlessly and safely.</p>
+        </div>
+
+        <div class="hiw-grid">
+            <div class="hiw-step reveal reveal-delay-1">
+                <div class="hiw-step-num">01</div>
+                <h4>Create Account</h4>
+                <p>Register your passenger node in 60 seconds. No lengthy forms.</p>
+            </div>
+            <div class="hiw-step reveal reveal-delay-2">
+                <div class="hiw-step-num">02</div>
+                <h4>Select Fleet</h4>
+                <p>Choose your service tier — City Ride, Prime, or Outstation.</p>
+            </div>
+            <div class="hiw-step reveal reveal-delay-3">
+                <div class="hiw-step-num">03</div>
+                <h4>Get Fixed Fare</h4>
+                <p>See your guaranteed flat price upfront. No hidden charges.</p>
+            </div>
+            <div class="hiw-step reveal reveal-delay-4">
+                <div class="hiw-step-num">04</div>
+                <h4>Track &amp; Ride</h4>
+                <p>Live GPS tracking from dispatch to your destination.</p>
+            </div>
+        </div>
+    </section>
+
+    <!-- TESTIMONIALS -->
+    <section class="testimonials-section">
+        <div class="section-title reveal">
+            <div class="section-label">Passenger Reviews</div>
+            <h2>WHAT OUR <span>CLIENTS SAY</span></h2>
+            <p>Real feedback from our verified passengers across Sri Lanka.</p>
+        </div>
+
+        <div class="testimonials-grid">
+            <div class="testimonial-card reveal reveal-delay-1">
+                <div class="testimonial-stars">
+                    <i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i
+                        class="fas fa-star"></i><i class="fas fa-star"></i>
+                </div>
+                <p>"FleetX Prime took me to my wedding venue in a spotless luxury sedan. The chauffeur was professional
+                    and punctual. Absolutely flawless experience."</p>
+                <div class="testimonial-author">
+                    <div class="author-avatar">NK</div>
+                    <div class="author-info">
+                        <div class="name">Nimal Karunaratne</div>
+                        <div class="role">FleetX Prime Customer · Colombo</div>
+                    </div>
+                </div>
+            </div>
+            <div class="testimonial-card reveal reveal-delay-2">
+                <div class="testimonial-stars">
+                    <i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i
+                        class="fas fa-star"></i><i class="fas fa-star"></i>
+                </div>
+                <p>"I use City Ride every day for my commute. The fare is always what they show upfront — no surge
+                    pricing nonsense. Best taxi app in Sri Lanka."</p>
+                <div class="testimonial-author">
+                    <div class="author-avatar">SJ</div>
+                    <div class="author-info">
+                        <div class="name">Samanthi Jayawardena</div>
+                        <div class="role">Regular City Ride User · Nugegoda</div>
+                    </div>
+                </div>
+            </div>
+            <div class="testimonial-card reveal reveal-delay-3">
+                <div class="testimonial-stars">
+                    <i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i
+                        class="fas fa-star"></i><i class="fas fa-star-half-alt"></i>
+                </div>
+                <p>"Booked an Outstation Drop to Kandy for my family. Spacious van, very comfortable ride. Will
+                    definitely use again for our next trip."</p>
+                <div class="testimonial-author">
+                    <div class="author-avatar">RP</div>
+                    <div class="author-info">
+                        <div class="name">Ruvinda Perera</div>
+                        <div class="role">Outstation Customer · Gampaha</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- CTA SECTION -->
+    <section class="cta-section reveal">
+        <div class="section-label" style="justify-content: center;">Ready to Roll?</div>
+        <h2>YOUR NEXT RIDE IS<br><span>ONE TAP AWAY</span></h2>
+        <p>Join 25,000+ passengers who trust FleetX for safe, fixed-fare transit across Sri Lanka.</p>
+        <div class="cta-btn-group">
+            <a href="booking.html" class="btn-primary"
+                style="font-size: 14px; padding: 15px 36px; text-decoration:none; display:inline-flex; align-items:center; gap:8px;">
+                <i class="fas fa-bolt"></i> Book a Ride Now
+            </a>
+            <a href="about.html" class="btn-outline-accent"
+                style="font-size: 14px; padding: 15px 32px; display: inline-block; text-decoration: none;">
+                Learn About Us
+            </a>
+        </div>
+    </section>
+
+    <!-- Auth panel injected dynamically by auth.js -->
+
+    <!-- FOOTER -->
+    <footer class="main-footer">
+        <div class="footer-grid">
+            <div class="footer-col">
+                <a href="index.html" class="logo"
+                    style="font-size: 22px; display: inline-flex; align-items: center; gap: 10px; margin-bottom: 20px; text-decoration: none;">
+                    <img src="../img/hed-logo.png" alt="FleetX Logo" style="height: 30px; width: auto; object-fit: contain;">
+                    FLEET<span>X</span>
+                </a>
+                <p>Sri Lanka's premier digital transit infrastructure — executive reliability, premium comfort, and
+                    completely transparent fixed-tariff travel nationwide.</p>
+                <div class="footer-social-links">
+                    <a href="#" aria-label="Facebook"><i class="fab fa-facebook-f"></i></a>
+                    <a href="#" aria-label="Instagram"><i class="fab fa-instagram"></i></a>
+                    <a href="#" aria-label="Twitter"><i class="fab fa-twitter"></i></a>
+                    <a href="#" aria-label="LinkedIn"><i class="fab fa-linkedin-in"></i></a>
+                </div>
+            </div>
+            <div class="footer-col">
+                <h4>Our Fleet</h4>
+                <ul>
+                    <li><a href="#services">City Ride (Budget)</a></li>
+                    <li><a href="#services">FleetX Prime (VIP)</a></li>
+                    <li><a href="#services">Outstation Drops</a></li>
+                    <li><a href="#how-it-works">How It Works</a></li>
+                </ul>
+            </div>
+            <div class="footer-col">
+                <h4>Company</h4>
+                <ul>
+                    <li><a href="about.html">About FleetX</a></li>
+                    <li><a href="#"
+                            onclick="fxShowToast('Driver Portal integration coming soon!', 'info'); return false;">Driver
+                            Portal</a></li>
+                    <li><a href="#">Terms of Service</a></li>
+                    <li><a href="#">Privacy Policy</a></li>
+                </ul>
+            </div>
+            <div class="footer-col">
+                <h4>Contact Terminal</h4>
+                <div class="footer-contact-item"><i class="fas fa-phone-alt"></i><span>+94 11 234 5678</span></div>
+                <div class="footer-contact-item"><i class="fas fa-envelope"></i><span>FleetX@gmail.com</span></div>
+                <div class="footer-contact-item"><i class="fas fa-map-marker-alt"></i><span>Colombo
+                        Rd,Polonnaruwa</span></div>
+            </div>
+        </div>
+        <div class="footer-bottom">
+            <p>&copy; 2026 FleetX Mobility Technologies. All Rights Reserved.</p>
+            <div class="footer-bottom-links">
+                <a href="#">Privacy</a>
+                <a href="#">Terms</a>
+                <a href="#">Cookies</a>
+            </div>
+        </div>
+    </footer>
+
+    <script src="auth.js"></script>
+    <script>
+        // Preloader
+        const loader = document.getElementById('pageLoader');
+        window.addEventListener('load', () => setTimeout(() => loader.classList.add('fade-out'), 500));
+
+        // Header scroll
+        const header = document.getElementById('mainHeader');
+        window.addEventListener('scroll', () => header.classList.toggle('scrolled', window.scrollY > 60));
+
+        // Animated counter
+        function animateCounter(el, target, suffix, duration = 1800) {
+            let start = 0;
+            const step = target / (duration / 16);
+            const timer = setInterval(() => {
+                start += step;
+                if (start >= target) { start = target; clearInterval(timer); }
+                el.textContent = Math.floor(start) + suffix;
+            }, 16);
+        }
+        let counterDone = false;
+        const statEl = document.getElementById('statCommutes');
+        new IntersectionObserver(entries => {
+            if (entries[0].isIntersecting && !counterDone) { counterDone = true; animateCounter(statEl, 25, 'k+'); }
+        }).observe(statEl);
+
+        // Scroll reveal
+        const reveals = document.querySelectorAll('.reveal');
+        new IntersectionObserver((entries) => {
+            entries.forEach(e => { if (e.isIntersecting) e.target.classList.add('visible'); });
+        }, { threshold: 0.1, rootMargin: '0px 0px -40px 0px' }).observe = (function (orig) {
+            return function (el) { orig.call(this, el); };
+        })(IntersectionObserver.prototype.observe);
+        const revObs = new IntersectionObserver((entries) => {
+            entries.forEach(e => { if (e.isIntersecting) e.target.classList.add('visible'); });
+        }, { threshold: 0.1, rootMargin: '0px 0px -40px 0px' });
+        reveals.forEach(el => revObs.observe(el));
+    </script>
+</body>
+
+</html>

@@ -1,0 +1,447 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description"
+        content="About FleetX — Learn our story, mission, and the team driving Sri Lanka's premium taxi revolution.">
+    <title>FleetX | About Us — Our Story &amp; Mission</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="../css/style.css">
+</head>
+
+<body>
+
+    <!-- PAGE LOADER -->
+    <div class="page-loader" id="pageLoader">
+        <div class="loader-spinner"></div>
+        <div class="loader-text">Loading Story...</div>
+    </div>
+
+    <!-- HEADER -->
+    <header id="mainHeader">
+        <a href="index.html" class="logo" style="display: flex; align-items: center; gap: 10px; text-decoration: none;">
+            <img src="../img/hed-logo.png" alt="FleetX Logo" style="height: 35px; width: auto; object-fit: contain;">
+            FLEET<span>X</span>
+        </a>
+        <nav>
+            <ul>
+                <li><a href="index.html">Home</a></li>
+                <li><a href="booking.html">Services</a></li>
+                <li><a href="index.html#how-it-works">How It Works</a></li>
+                <li><a href="about.html" class="active">About</a></li>
+                <li id="navAuthArea"></li>
+            </ul>
+        </nav>
+    </header>
+
+    <!-- ABOUT HERO -->
+    <section class="about-hero page-wrapper">
+        <div class="about-hero-bg"></div>
+        <div class="about-hero-glow"></div>
+        <div style="position: relative; z-index: 10; max-width: 700px;">
+            <div class="hero-badge" style="animation: none; opacity: 1;">
+                <i class="fas fa-circle" style="font-size: 8px; color: var(--success);"></i>
+                Est. 2023 · Colombo, Sri Lanka
+            </div>
+            <h1
+                style="font-family: var(--font-display); font-size: 4rem; font-weight: 700; line-height: 1.08; margin-bottom: 24px;">
+                WE ARE REDEFINING<br>TRANSIT IN <span
+                    style="background: linear-gradient(135deg, #ffcc00, #ff9800); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text;">SRI
+                    LANKA</span>
+            </h1>
+            <p style="font-size: 17px; color: var(--text-muted); line-height: 1.7; max-width: 560px;">
+                FleetX was built on one belief — every Sri Lankan deserves transparent, safe, and premium ground
+                transport without compromise.
+            </p>
+        </div>
+    </section>
+
+    <!-- ABOUT STORY SECTION -->
+    <section style="padding: 0 0 0 0; background: var(--bg-main);">
+        <div class="about-grid" style="padding-top: 80px;">
+            <div class="about-image-block reveal">
+                <img src="https://images.unsplash.com/photo-1449965408869-eaa3f722e40d?auto=format&fit=crop&w=800&q=80"
+                    alt="FleetX premium vehicle on Colombo roads" class="about-image-main" />
+                <div class="about-image-badge">
+                    <span class="big">2023</span>
+                    Founded in<br>Colombo
+                </div>
+            </div>
+
+            <div class="about-text-block reveal reveal-delay-1">
+                <div class="section-label">Our Story</div>
+                <h2>FROM AN IDEA TO <span>SRI LANKA'S FINEST</span></h2>
+                <p>
+                    FleetX was born out of frustration. Our founders experienced firsthand the unreliable, overpriced,
+                    and unsafe nature of traditional taxi services across the island. In 2023, they set out to change
+                    that — permanently.
+                    <br><br>
+                    Starting with just 12 vehicles in Colombo, we have grown to a nationwide fleet serving thousands of
+                    passengers every day — from budget commuters to corporate executives.
+                </p>
+
+                <div class="about-features">
+                    <div class="about-feature-item">
+                        <i class="fas fa-shield-alt"></i>
+                        <div>
+                            <h5>Verified Drivers</h5>
+                            <p>All chauffeurs pass a thorough background screening process.</p>
+                        </div>
+                    </div>
+                    <div class="about-feature-item">
+                        <i class="fas fa-tag"></i>
+                        <div>
+                            <h5>Fixed Fares Always</h5>
+                            <p>No surge pricing. Ever. What you see is what you pay.</p>
+                        </div>
+                    </div>
+                    <div class="about-feature-item">
+                        <i class="fas fa-satellite-dish"></i>
+                        <div>
+                            <h5>Live GPS Tracking</h5>
+                            <p>Real-time location shared with family for every ride.</p>
+                        </div>
+                    </div>
+                    <div class="about-feature-item">
+                        <i class="fas fa-headset"></i>
+                        <div>
+                            <h5>24/7 Support</h5>
+                            <p>Our operations team is always online to assist you.</p>
+                        </div>
+                    </div>
+                </div>
+
+                <a href="#" onclick="fxRequireAuth(() => { window.location.href = 'booking.html'; }); return false;"
+                    class="btn-primary"
+                    style="display: inline-flex; align-items: center; gap: 10px; font-size: 14px; padding: 14px 30px; text-decoration: none;">
+                    Start Your Journey <i class="fas fa-arrow-right" style="font-size: 11px;"></i>
+                </a>
+            </div>
+        </div>
+    </section>
+
+    <!-- NUMBERS SECTION -->
+    <section style="padding: 80px 8%; background: #0a0a0a; position: relative;">
+        <div
+            style="position: absolute; top: 0; left: 0; right: 0; height: 1px; background: linear-gradient(to right, transparent, var(--border), transparent);">
+        </div>
+        <div class="section-title reveal" style="margin-bottom: 56px;">
+            <div class="section-label">By The Numbers</div>
+            <h2>OUR IMPACT IN <span>NUMBERS</span></h2>
+        </div>
+        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 24px;">
+            <div class="reveal reveal-delay-1"
+                style="background: var(--bg-card); border: 1px solid var(--border); border-radius: 16px; padding: 36px 28px; text-align: center; position: relative; overflow: hidden;">
+                <div
+                    style="position: absolute; top: 0; left: 50%; transform: translateX(-50%); width: 50px; height: 3px; background: linear-gradient(to right, var(--accent), #ff9800); border-radius: 0 0 4px 4px;">
+                </div>
+                <div
+                    style="font-family: var(--font-display); font-size: 3rem; font-weight: 700; background: linear-gradient(135deg, #ffcc00, #ff9800); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text; line-height: 1; margin-bottom: 10px;">
+                    25k+</div>
+                <div style="color: var(--text-muted); font-size: 13px; text-transform: uppercase; letter-spacing: 2px;">
+                    Rides Completed</div>
+            </div>
+            <div class="reveal reveal-delay-2"
+                style="background: var(--bg-card); border: 1px solid var(--border); border-radius: 16px; padding: 36px 28px; text-align: center; position: relative; overflow: hidden;">
+                <div
+                    style="position: absolute; top: 0; left: 50%; transform: translateX(-50%); width: 50px; height: 3px; background: linear-gradient(to right, var(--accent), #ff9800); border-radius: 0 0 4px 4px;">
+                </div>
+                <div
+                    style="font-family: var(--font-display); font-size: 3rem; font-weight: 700; background: linear-gradient(135deg, #ffcc00, #ff9800); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text; line-height: 1; margin-bottom: 10px;">
+                    480+</div>
+                <div style="color: var(--text-muted); font-size: 13px; text-transform: uppercase; letter-spacing: 2px;">
+                    Active Vehicles</div>
+            </div>
+            <div class="reveal reveal-delay-3"
+                style="background: var(--bg-card); border: 1px solid var(--border); border-radius: 16px; padding: 36px 28px; text-align: center; position: relative; overflow: hidden;">
+                <div
+                    style="position: absolute; top: 0; left: 50%; transform: translateX(-50%); width: 50px; height: 3px; background: linear-gradient(to right, var(--accent), #ff9800); border-radius: 0 0 4px 4px;">
+                </div>
+                <div
+                    style="font-family: var(--font-display); font-size: 3rem; font-weight: 700; background: linear-gradient(135deg, #ffcc00, #ff9800); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text; line-height: 1; margin-bottom: 10px;">
+                    9</div>
+                <div style="color: var(--text-muted); font-size: 13px; text-transform: uppercase; letter-spacing: 2px;">
+                    Cities Covered</div>
+            </div>
+            <div class="reveal reveal-delay-4"
+                style="background: var(--bg-card); border: 1px solid var(--border); border-radius: 16px; padding: 36px 28px; text-align: center; position: relative; overflow: hidden;">
+                <div
+                    style="position: absolute; top: 0; left: 50%; transform: translateX(-50%); width: 50px; height: 3px; background: linear-gradient(to right, var(--accent), #ff9800); border-radius: 0 0 4px 4px;">
+                </div>
+                <div
+                    style="font-family: var(--font-display); font-size: 3rem; font-weight: 700; background: linear-gradient(135deg, #ffcc00, #ff9800); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text; line-height: 1; margin-bottom: 10px;">
+                    4.9</div>
+                <div style="color: var(--text-muted); font-size: 13px; text-transform: uppercase; letter-spacing: 2px;">
+                    Average Rating</div>
+            </div>
+        </div>
+    </section>
+
+    <!-- VALUES SECTION -->
+    <section class="values-section">
+        <div class="section-title reveal">
+            <div class="section-label">What We Stand For</div>
+            <h2>OUR CORE <span>VALUES</span></h2>
+            <p>The principles that guide every decision we make, every ride we dispatch.</p>
+        </div>
+
+        <div class="values-grid">
+            <div class="value-card reveal reveal-delay-1">
+                <div class="value-icon"><i class="fas fa-shield-alt"></i></div>
+                <h4>Safety First</h4>
+                <p>Every driver is verified. Every vehicle is inspected. Every ride is tracked. Your safety is never
+                    negotiable.</p>
+            </div>
+            <div class="value-card reveal reveal-delay-2">
+                <div class="value-icon"><i class="fas fa-balance-scale"></i></div>
+                <h4>Radical Transparency</h4>
+                <p>Fixed fares shown upfront. No surge pricing. No hidden charges. What you see is exactly what you pay.
+                </p>
+            </div>
+            <div class="value-card reveal reveal-delay-3">
+                <div class="value-icon"><i class="fas fa-star"></i></div>
+                <h4>Premium Experience</h4>
+                <p>From clean vehicles to professional chauffeurs, every interaction is designed to exceed your
+                    expectations.</p>
+            </div>
+            <div class="value-card reveal reveal-delay-4">
+                <div class="value-icon"><i class="fas fa-leaf"></i></div>
+                <h4>Sustainable Transit</h4>
+                <p>We're actively expanding our hybrid and EV fleet, committed to a greener Sri Lanka for future
+                    generations.</p>
+            </div>
+        </div>
+    </section>
+
+    <!-- TEAM SECTION -->
+    <section class="team-section">
+        <div class="section-title reveal">
+            <div class="section-label">Meet The Crew</div>
+            <h2>THE PEOPLE BEHIND <span>FLEETX</span></h2>
+            <p>A passionate team of engineers, operators, and visionaries driving the future of Sri Lankan transit.</p>
+        </div>
+
+        <div class="team-grid">
+            <div class="team-card reveal reveal-delay-1">
+                <div class="team-card-img">
+                    <i class="fas fa-user-tie"></i>
+                </div>
+                <div class="team-card-body">
+                    <h4>Pasindu Sandamal</h4>
+                    <div class="role">Chief Executive Officer</div>
+                    <p>Ex-Uber APAC operations lead. Passionate about building transport infrastructure for emerging
+                        markets.</p>
+                </div>
+            </div>
+            <div class="team-card reveal reveal-delay-2">
+                <div class="team-card-img">
+                    <i class="fas fa-user-cog"></i>
+                </div>
+                <div class="team-card-body">
+                    <h4>Masitha Bandara</h4>
+                    <div class="role">Chief Technology Officer</div>
+                    <p>Full-stack architect with 10+ years building scalable platforms across Southeast Asia.</p>
+                </div>
+            </div>
+            <div class="team-card reveal reveal-delay-3">
+                <div class="team-card-img">
+                    <i class="fas fa-user-circle"></i>
+                </div>
+                <div class="team-card-body">
+                    <h4>Malindu Sandeepa</h4>
+                    <div class="role">Head of Operations</div>
+                    <p>Former logistics manager at MAS Holdings. Oversees our 480+ vehicle fleet nationwide.</p>
+                </div>
+            </div>
+            <div class="team-card reveal reveal-delay-4">
+                <div class="team-card-img">
+                    <i class="fas fa-user-graduate"></i>
+                </div>
+                <div class="team-card-body">
+                    <h4>Aseniya Induwara</h4>
+                    <div class="role">Head of Customer Success</div>
+                    <p>Dedicated to ensuring every passenger has an experience worth sharing with friends and family.
+                    </p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- MILESTONES TIMELINE -->
+    <section style="padding: 100px 8%; background: #0a0a0a; position: relative;">
+        <div
+            style="position: absolute; top: 0; left: 0; right: 0; height: 1px; background: linear-gradient(to right, transparent, var(--border), transparent);">
+        </div>
+        <div class="section-title reveal" style="margin-bottom: 70px;">
+            <div class="section-label">Our Journey</div>
+            <h2>MILESTONES &amp; <span>ACHIEVEMENTS</span></h2>
+        </div>
+        <div style="max-width: 700px; margin: 0 auto; position: relative;">
+            <div style="position: absolute; left: 22px; top: 0; bottom: 0; width: 1px; background: var(--border);">
+            </div>
+
+            <div class="reveal" style="display: flex; gap: 32px; margin-bottom: 48px; position: relative;">
+                <div
+                    style="width: 46px; height: 46px; background: var(--accent); border-radius: 50%; display: flex; align-items: center; justify-content: center; color: #000; font-weight: 700; font-size: 13px; flex-shrink: 0; position: relative; z-index: 2;">
+                    23</div>
+                <div style="padding-top: 10px;">
+                    <div
+                        style="font-size: 11px; color: var(--accent); font-weight: 700; text-transform: uppercase; letter-spacing: 2px; margin-bottom: 6px;">
+                        Q1 2023</div>
+                    <h4 style="font-family: var(--font-display); font-size: 18px; margin-bottom: 8px;">Company Founded
+                    </h4>
+                    <p style="color: var(--text-muted); font-size: 14px; line-height: 1.6;">FleetX was incorporated in
+                        Colombo with an initial seed round. Operations began with 12 vehicles serving Colombo Metro.</p>
+                </div>
+            </div>
+
+            <div class="reveal reveal-delay-1"
+                style="display: flex; gap: 32px; margin-bottom: 48px; position: relative;">
+                <div
+                    style="width: 46px; height: 46px; background: var(--bg-card); border: 2px solid var(--accent); border-radius: 50%; display: flex; align-items: center; justify-content: center; color: var(--accent); font-weight: 700; font-size: 13px; flex-shrink: 0; position: relative; z-index: 2;">
+                    23</div>
+                <div style="padding-top: 10px;">
+                    <div
+                        style="font-size: 11px; color: var(--accent); font-weight: 700; text-transform: uppercase; letter-spacing: 2px; margin-bottom: 6px;">
+                        Q3 2023</div>
+                    <h4 style="font-family: var(--font-display); font-size: 18px; margin-bottom: 8px;">FleetX Prime
+                        Launched</h4>
+                    <p style="color: var(--text-muted); font-size: 14px; line-height: 1.6;">Expanded to luxury and
+                        executive services. Corporate accounts opened with leading Colombo businesses.</p>
+                </div>
+            </div>
+
+            <div class="reveal reveal-delay-2"
+                style="display: flex; gap: 32px; margin-bottom: 48px; position: relative;">
+                <div
+                    style="width: 46px; height: 46px; background: var(--bg-card); border: 2px solid var(--accent); border-radius: 50%; display: flex; align-items: center; justify-content: center; color: var(--accent); font-weight: 700; font-size: 13px; flex-shrink: 0; position: relative; z-index: 2;">
+                    24</div>
+                <div style="padding-top: 10px;">
+                    <div
+                        style="font-size: 11px; color: var(--accent); font-weight: 700; text-transform: uppercase; letter-spacing: 2px; margin-bottom: 6px;">
+                        Q2 2024</div>
+                    <h4 style="font-family: var(--font-display); font-size: 18px; margin-bottom: 8px;">Outstation &amp;
+                        Island-Wide Expansion</h4>
+                    <p style="color: var(--text-muted); font-size: 14px; line-height: 1.6;">Launched Outstation Drop
+                        service covering Kandy, Galle, Jaffna, and 6 more major cities across Sri Lanka.</p>
+                </div>
+            </div>
+
+            <div class="reveal reveal-delay-3" style="display: flex; gap: 32px; position: relative;">
+                <div
+                    style="width: 46px; height: 46px; background: var(--bg-card); border: 2px solid rgba(255, 204, 0, 0.3); border-radius: 50%; display: flex; align-items: center; justify-content: center; color: rgba(255, 204, 0, 0.5); font-weight: 700; font-size: 13px; flex-shrink: 0; position: relative; z-index: 2;">
+                    26</div>
+                <div style="padding-top: 10px;">
+                    <div
+                        style="font-size: 11px; color: rgba(255, 204, 0, 0.5); font-weight: 700; text-transform: uppercase; letter-spacing: 2px; margin-bottom: 6px;">
+                        2026 — Upcoming</div>
+                    <h4
+                        style="font-family: var(--font-display); font-size: 18px; margin-bottom: 8px; color: var(--text-muted);">
+                        EV Fleet &amp; Mobile App</h4>
+                    <p style="color: var(--text-dim); font-size: 14px; line-height: 1.6;">Rolling out our green EV fleet
+                        and a fully featured iOS &amp; Android passenger app with in-app payments.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- CTA SECTION -->
+    <section class="cta-section reveal">
+        <div class="section-label" style="justify-content: center;">Join the Movement</div>
+        <h2>DRIVE WITH US OR<br><span>RIDE WITH US</span></h2>
+        <p>Whether you're a passenger looking for the best ride or a driver seeking a premium platform — FleetX is your
+            home.</p>
+        <div class="cta-btn-group">
+            <a href="index.html" class="btn-primary"
+                style="font-size: 14px; padding: 15px 36px; text-decoration: none;">
+                <i class="fas fa-bolt" style="margin-right: 8px;"></i> Book a Ride
+            </a>
+            <a href="#" onclick="fxShowToast('Driver Portal integration coming soon!', 'info'); return false;"
+                class="btn-outline-accent" style="font-size: 14px; padding: 15px 32px; text-decoration: none;">
+                Driver Portal
+            </a>
+        </div>
+    </section>
+
+    <!-- FOOTER -->
+    <footer class="main-footer">
+        <div class="footer-grid">
+            <div class="footer-col">
+                <a href="index.html" class="logo"
+                    style="font-size: 22px; display: inline-flex; align-items: center; gap: 10px; margin-bottom: 20px; text-decoration: none;">
+                    <img src="../img/hed-logo.png" alt="FleetX Logo" style="height: 30px; width: auto; object-fit: contain;">
+                    FLEET<span>X</span>
+                </a>
+                <p>Sri Lanka's premier digital transit infrastructure — executive reliability, premium comfort, and
+                    completely transparent fixed-tariff travel nationwide.</p>
+                <div class="footer-social-links">
+                    <a href="#" aria-label="Facebook"><i class="fab fa-facebook-f"></i></a>
+                    <a href="#" aria-label="Instagram"><i class="fab fa-instagram"></i></a>
+                    <a href="#" aria-label="Twitter"><i class="fab fa-twitter"></i></a>
+                    <a href="#" aria-label="LinkedIn"><i class="fab fa-linkedin-in"></i></a>
+                </div>
+            </div>
+            <div class="footer-col">
+                <h4>Our Fleet</h4>
+                <ul>
+                    <li><a href="index.html#services">City Ride (Budget)</a></li>
+                    <li><a href="index.html#services">FleetX Prime (VIP)</a></li>
+                    <li><a href="index.html#services">Outstation Drops</a></li>
+                    <li><a href="index.html#how-it-works">How It Works</a></li>
+                </ul>
+            </div>
+            <div class="footer-col">
+                <h4>Company</h4>
+                <ul>
+                    <li><a href="about.html">About FleetX</a></li>
+                    <li><a href="#"
+                            onclick="fxShowToast('Driver Portal integration coming soon!', 'info'); return false;">Driver
+                            Portal</a></li>
+                    <li><a href="#">Terms of Service</a></li>
+                    <li><a href="#">Privacy Policy</a></li>
+                </ul>
+            </div>
+            <div class="footer-col">
+                <h4>Contact Terminal</h4>
+                <div class="footer-contact-item"><i class="fas fa-phone-alt"></i><span>+94 11 234 5678</span></div>
+                <div class="footer-contact-item"><i class="fas fa-envelope"></i><span>ops@fleetx.lk</span></div>
+                <div class="footer-contact-item"><i class="fas fa-map-marker-alt"></i><span>Colombo 03, Sri Lanka</span>
+                </div>
+            </div>
+        </div>
+        <div class="footer-bottom">
+            <p>&copy; 2026 FleetX Mobility Technologies. All Rights Reserved.</p>
+            <div class="footer-bottom-links">
+                <a href="#">Privacy</a>
+                <a href="#">Terms</a>
+                <a href="#">Cookies</a>
+            </div>
+        </div>
+    </footer>
+
+    <script src="auth.js"></script>
+    <script>
+        // Preloader
+        const loader = document.getElementById('pageLoader');
+        window.addEventListener('load', () => {
+            setTimeout(() => loader.classList.add('fade-out'), 500);
+        });
+
+        // Header Scroll
+        const header = document.getElementById('mainHeader');
+        window.addEventListener('scroll', () => {
+            header.classList.toggle('scrolled', window.scrollY > 60);
+        });
+
+        // Scroll Reveal
+        const reveals = document.querySelectorAll('.reveal');
+        const revealObs = new IntersectionObserver((entries) => {
+            entries.forEach(e => { if (e.isIntersecting) e.target.classList.add('visible'); });
+        }, { threshold: 0.08, rootMargin: '0px 0px -30px 0px' });
+        reveals.forEach(el => revealObs.observe(el));
+    </script>
+</body>
+
+</html>

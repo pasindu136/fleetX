@@ -1,0 +1,507 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>FleetX Terminal | Passenger Control Dashboard</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+    <link rel="stylesheet" href="../css/style.css">
+    <style>
+        .map-viewport-wrapper {
+            position: relative;
+            background: #000;
+            overflow: hidden;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            height: 380px !important;
+        }
+        #dashboardMap {
+            width: 100%;
+            height: 100%;
+            z-index: 1;
+        }
+        /* Leaflet custom dark theme overrides for popups */
+        .leaflet-popup-content-wrapper, .leaflet-popup-tip {
+            background: #111 !important;
+            color: #fff !important;
+            border: 1px solid var(--border);
+        }
+    </style>
+</head>
+<body>
+
+    <div class="page-loader" id="pageLoader">
+        <div class="loader-spinner"></div>
+        <div class="loader-text">Syncing Passenger Portal...</div>
+    </div>
+
+    <header>
+        <a href="index.html" class="logo" style="display: flex; align-items: center; gap: 10px; cursor: pointer; text-decoration: none;">
+            <img src="../img/hed-logo.png" alt="FleetX Logo" style="height: 35px; width: auto; object-fit: contain;">
+            FLEET<span>X</span>
+        </a>
+        <nav>
+            <ul>
+                <li><a href="index.html">Home</a></li>
+                <li><a href="booking.html">Services</a></li>
+                <li><a href="dashboard.html" class="active">Dashboard</a></li>
+                <li><a href="about.html">About</a></li>
+                <li id="navAuthArea"></li>
+            </ul>
+        </nav>
+    </header>
+
+    <main class="dashboard-container" style="padding: 40px 8% 80px 8%;">
+        
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; border-bottom: 1px solid var(--border); padding-bottom: 20px;">
+            <div>
+                <h2 style="font-weight: 900; font-size: 28px; letter-spacing: 0.5px;">PASSENGER <span>CONTROL HUB</span></h2>
+                <p style="color: var(--text-muted); font-size: 13.5px; margin-top: 4px;">Welcome back, Client Node. Initialize real-time transit telemetry requests below.</p>
+            </div>
+            <div style="text-align: right; background: var(--bg-card); padding: 10px 20px; border-radius: 6px; border: 1px solid var(--border);">
+                <span style="font-size: 11px; color: var(--accent); font-weight: 700; text-transform: uppercase; display:block;">Active Node Token</span>
+                <span style="font-size: 13px; font-weight: 600; font-family: monospace;">FX-99284-LK</span>
+            </div>
+        </div>
+
+        <div class="db-grid-container">
+            
+            <div class="db-panel-card">
+                <h3><i class="fas fa-sliders-h"></i> Dispatch Parameters</h3>
+                
+                <form id="dashboardBookingForm">
+                    <div class="fleet-selector-group">
+                        <div class="fleet-option selected" onclick="selectFleet(this, 'city', 110)">
+                            <i class="fas fa-car"></i>
+                            <span>City Ride</span>
+                        </div>
+                        <div class="fleet-option" onclick="selectFleet(this, 'prime', 240)">
+                            <i class="fas fa-car-side"></i>
+                            <span>X Prime</span>
+                        </div>
+                        <div class="fleet-option" onclick="selectFleet(this, 'outstation', 180)">
+                            <i class="fas fa-route"></i>
+                            <span>Outstation</span>
+                        </div>
+                    </div>
+
+                    <div class="input-group">
+                        <input type="text" id="dbTxtPickup" placeholder=" " required>
+                        <label for="dbTxtPickup"><i class="fas fa-map-marker-alt" style="color:var(--accent); margin-right:5px;"></i> Pickup Address / Terminal</label>
+                    </div>
+
+                    <div class="input-group">
+                        <input type="text" id="dbTxtDrop" placeholder=" " required>
+                        <label for="dbTxtDrop"><i class="fas fa-flag-checkered" style="color:#ff4757; margin-right:5px;"></i> Destination Vector</label>
+                    </div>
+
+                    <div class="fare-receipt-box" id="fareInvoiceBox">
+                        <div class="receipt-line">
+                            <span>Base Operational Tariff:</span>
+                            <span id="invoiceBase">LKR 150.00</span>
+                        </div>
+                        <div class="receipt-line">
+                            <span>Computed Vector Distance:</span>
+                            <span id="invoiceDistance">12.5 KM</span>
+                        </div>
+                        <div class="receipt-line" style="border-top: 1px solid var(--border); padding-top: 10px; margin-top: 10px; color: #ffffff; font-weight: 700;">
+                            <span>Guaranteed Flat Fare:</span>
+                            <span id="invoiceTotal" style="color: var(--accent); font-size: 16px;">LKR 1,525.00</span>
+                        </div>
+                    </div>
+
+                    <button type="button" id="btnCalculateFare" class="btn-secondary" style="width: 100%; margin-bottom: 12px; padding: 14px;">Compute Dynamic Fare</button>
+                    <button type="submit" id="btnRequestDispatch" class="btn-primary" style="width: 100%; padding: 14px; display: none;">Request Immediate Dispatch</button>
+                </form>
+            </div>
+
+            <div class="db-panel-card">
+                <h3><i class="fas fa-satellite-dish"></i> Real-time Transit Telemetry Map</h3>
+                
+                <div class="map-viewport-wrapper">
+                    <div id="dashboardMap"></div>
+                    
+                    <div id="mapStatusMessage" style="position: absolute; bottom: 15px; left: 15px; right: 15px; z-index: 1000; background: rgba(10,10,10,0.95); border: 1px solid var(--border); padding: 10px 15px; border-radius: 6px; text-align: center; display: flex; align-items: center; justify-content: center; gap: 8px; box-shadow: 0 4px 15px rgba(0,0,0,0.5);">
+                        <i class="fas fa-map-signs" style="color: var(--accent); font-size: 15px;"></i>
+                        <span style="font-size: 11.5px; color: var(--text-muted); font-weight: 500;" id="mapStatusText">Click on map to set Pickup (green marker) and Destination (red marker).</span>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+
+        <div class="db-panel-card history-panel-section">
+            <h3><i class="fas fa-history"></i> Logged Transit History Records</h3>
+            
+            <div style="overflow-x: auto;">
+                <table class="data-matrix-table">
+                    <thead>
+                        <tr>
+                            <th>Transaction ID</th>
+                            <th>Allocation Date</th>
+                            <th>Service Category</th>
+                            <th>Origin Route Path Vectors</th>
+                            <th>Total Tariff Paid</th>
+                            <th>Gateway Status</th>
+                        </tr>
+                    </thead>
+                    <tbody id="historyTableBody">
+                        <tr>
+                            <td style="font-family: monospace; font-weight: 700; color: #ffffff;">#FTX-88294</td>
+                            <td>June 18, 2026</td>
+                            <td><i class="fas fa-car-side" style="color:var(--accent); margin-right: 5px;"></i> FleetX Prime</td>
+                            <td>Colombo 03 Terminal &rarr; BIA Airport Expressway Node</td>
+                            <td style="font-weight: 700; color: #ffffff;">LKR 4,850.00</td>
+                            <td><span class="status-badge completed">Completed</span></td>
+                        </tr>
+                        <tr>
+                            <td style="font-family: monospace; font-weight: 700; color: #ffffff;">#FTX-87102</td>
+                            <td>June 12, 2026</td>
+                            <td><i class="fas fa-car" style="color:var(--accent); margin-right: 5px;"></i> City Ride</td>
+                            <td>Nugegoda Junction &rarr; Colombo Fort Station Hub</td>
+                            <td style="font-weight: 700; color: #ffffff;">LKR 1,220.00</td>
+                            <td><span class="status-badge completed">Completed</span></td>
+                        </tr>
+                        <tr>
+                            <td style="font-family: monospace; font-weight: 700; color: #ffffff;">#FTX-85591</td>
+                            <td>May 29, 2026</td>
+                            <td><i class="fas fa-route" style="color:var(--accent); margin-right: 5px;"></i> Outstation</td>
+                            <td>Colombo Central &rarr; Kandy Corporate Center</td>
+                            <td style="font-weight: 700; color: #ffffff;">LKR 0.00</td>
+                            <td><span class="status-badge cancelled">Cancelled</span></td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+    </main>
+
+    <footer class="main-footer">
+        <div class="footer-grid">
+            <div class="footer-col">
+                <div class="logo" style="display: flex; align-items: center; gap: 10px; margin-bottom: 20px;">
+                    <img src="../img/hed-logo.png" alt="FleetX Logo" style="height: 32px; width: auto; object-fit: contain;">FLEET<span>X</span>
+                </div>
+                <p>Sri Lanka's premier digital transit infrastructure, supplying executive reliability, premium comfort, and completely transparent, fixed-tariff passenger travel.</p>
+            </div>
+            <div class="footer-col">
+                <h4>Our Fleet</h4>
+                <ul>
+                    <li><a href="#services">City Ride (Budget)</a></li>
+                    <li><a href="#services">FleetX Prime (VIP)</a></li>
+                    <li><a href="#services">Outstation Drops</a></li>
+                </ul>
+            </div>
+            <div class="footer-col">
+                <h4>Support & Info</h4>
+                <ul>
+                    <li><a href="#">About Company</a></li>
+                    <li><a href="#" onclick="fxShowToast('Driver Portal integration coming soon!', 'info'); return false;">Driver Portal</a></li>
+                    <li><a href="#">Terms of Service</a></li>
+                </ul>
+            </div>
+            <div class="footer-col">
+                <h4>Contact Terminal</h4>
+                <div class="footer-contact-item"><i class="fas fa-phone-alt"></i><span>+94 11 234 5678</span></div>
+                <div class="footer-contact-item"><i class="fas fa-envelope"></i><span>ops@fleetx.lk</span></div>
+            </div>
+        </div>
+        <div class="footer-bottom">
+            <p>&copy; 2026 FleetX Mobility Technologies. All Rights Reserved.</p>
+        </div>
+    </footer>
+
+    <script src="auth.js"></script>
+    <script>
+        let map = null, pickupMarker = null, dropMarker = null, routePolyline = null;
+        let mapDistance = 12.5;
+
+        // Check authentication
+        document.addEventListener('DOMContentLoaded', () => {
+            const user = fxGetUser();
+            if (!user) {
+                // Require auth, on success reload the page
+                fxRequireAuth(() => {
+                    window.location.reload();
+                });
+            } else {
+                // Update greeting with user's name
+                const welcomeP = document.querySelector('main h2 + p');
+                if (welcomeP) {
+                    welcomeP.innerHTML = `Welcome back, <b>${user.name}</b>. Initialize real-time transit telemetry requests below.`;
+                }
+                const tokenSpan = document.querySelector('span[style*="font-family: monospace;"]');
+                if (tokenSpan) {
+                    const initials = user.name.split(' ').map(w => w[0]).join('').toUpperCase().slice(0, 2);
+                    tokenSpan.textContent = `FX-${initials}-${user.email.split('@')[0].toUpperCase()}`;
+                }
+                renderDashboardHistory();
+                initMap();
+            }
+        });
+
+        function initMap() {
+            if (map) return;
+            const slCenter = [7.8731, 80.7718];
+            map = L.map('dashboardMap', {
+                zoomControl: true,
+                attributionControl: false
+            }).setView(slCenter, 7.5);
+
+            L.tileLayer('https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png', {
+                maxZoom: 20
+            }).addTo(map);
+
+            map.on('click', onMapClick);
+        }
+
+        function onMapClick(e) {
+            const latlng = e.latlng;
+            const pickupInput = document.getElementById('dbTxtPickup');
+            const dropInput = document.getElementById('dbTxtDrop');
+            
+            if (!pickupMarker) {
+                pickupMarker = L.marker(latlng, {
+                    draggable: true,
+                    icon: L.icon({
+                        iconUrl: 'https://raw.githubusercontent.com/pointhi/leaflet-color-markers/master/img/marker-icon-2x-gold.png',
+                        shadowUrl: 'https://cdnjs.cloudflare.com/ajax/libs/leaflet/0.7.7/images/marker-shadow.png',
+                        iconSize: [25, 41],
+                        iconAnchor: [12, 41],
+                        popupAnchor: [1, -34],
+                        shadowSize: [41, 41]
+                    })
+                }).addTo(map).bindPopup("<b>Pickup</b>").openPopup();
+                
+                pickupMarker.on('dragend', updateRouteAndDistance);
+                pickupInput.value = `Point (${latlng.lat.toFixed(4)}, ${latlng.lng.toFixed(4)})`;
+                updateRouteAndDistance();
+            } else if (!dropMarker) {
+                dropMarker = L.marker(latlng, {
+                    draggable: true,
+                    icon: L.icon({
+                        iconUrl: 'https://raw.githubusercontent.com/pointhi/leaflet-color-markers/master/img/marker-icon-2x-red.png',
+                        shadowUrl: 'https://cdnjs.cloudflare.com/ajax/libs/leaflet/0.7.7/images/marker-shadow.png',
+                        iconSize: [25, 41],
+                        iconAnchor: [12, 41],
+                        popupAnchor: [1, -34],
+                        shadowSize: [41, 41]
+                    })
+                }).addTo(map).bindPopup("<b>Destination</b>").openPopup();
+                
+                dropMarker.on('dragend', updateRouteAndDistance);
+                dropInput.value = `Point (${latlng.lat.toFixed(4)}, ${latlng.lng.toFixed(4)})`;
+                updateRouteAndDistance();
+            } else {
+                // Clear and restart
+                clearMapMarkers();
+            }
+        }
+
+        function clearMapMarkers() {
+            if (pickupMarker) {
+                map.removeLayer(pickupMarker);
+                pickupMarker = null;
+            }
+            if (dropMarker) {
+                map.removeLayer(dropMarker);
+                dropMarker = null;
+            }
+            if (routePolyline) {
+                map.removeLayer(routePolyline);
+                routePolyline = null;
+            }
+            document.getElementById('dbTxtPickup').value = '';
+            document.getElementById('dbTxtDrop').value = '';
+            document.getElementById('mapStatusText').textContent = 'Click on map to set Pickup (green marker) and Destination (red marker).';
+            if (invoiceBox) invoiceBox.style.display = 'none';
+            if (btnReq) btnReq.style.display = 'none';
+            btnCalc.innerText = "Compute Dynamic Fare";
+        }
+
+        function updateRouteAndDistance() {
+            const pickupInput = document.getElementById('dbTxtPickup');
+            const dropInput = document.getElementById('dbTxtDrop');
+            
+            if (!pickupMarker || !dropMarker) {
+                if (routePolyline) {
+                    map.removeLayer(routePolyline);
+                    routePolyline = null;
+                }
+                return;
+            }
+
+            const p1 = pickupMarker.getLatLng();
+            const p2 = dropMarker.getLatLng();
+
+            if (routePolyline) {
+                routePolyline.setLatLngs([p1, p2]);
+            } else {
+                routePolyline = L.polyline([p1, p2], { color: 'var(--accent)', weight: 4, dashArray: '5, 10' }).addTo(map);
+            }
+
+            map.fitBounds(L.latLngBounds(p1, p2), { padding: [40, 40] });
+
+            const distanceMeters = p1.distanceTo(p2);
+            mapDistance = parseFloat((distanceMeters / 1000).toFixed(1));
+
+            if (pickupInput.value.startsWith('Point')) {
+                pickupInput.value = `Point (${p1.lat.toFixed(4)}, ${p1.lng.toFixed(4)})`;
+            }
+            if (dropInput.value.startsWith('Point')) {
+                dropInput.value = `Point (${p2.lat.toFixed(4)}, ${p2.lng.toFixed(4)})`;
+            }
+
+            document.getElementById('mapStatusText').textContent = `Route path locked: ${mapDistance} KM. Click again to reset.`;
+            
+            if(document.getElementById('fareInvoiceBox').style.display === 'block') {
+                computeTariffMatrix();
+            }
+        }
+
+        // Smooth Preloader Initialization
+        const loader = document.getElementById('pageLoader');
+        window.addEventListener('load', () => { 
+            setTimeout(() => { loader.classList.add('fade-out'); }, 400); 
+        });
+
+        let selectedRatePerKM = 110; 
+        let selectedFleetName = "City Ride";
+
+        function selectFleet(element, type, rate) {
+            document.querySelectorAll('.fleet-option').forEach(opt => opt.classList.remove('selected'));
+            element.classList.add('selected');
+            selectedRatePerKM = rate;
+            selectedFleetName = element.querySelector('span').innerText;
+            
+            if(document.getElementById('fareInvoiceBox').style.display === 'block') {
+                computeTariffMatrix();
+            }
+        }
+
+        const btnCalc = document.getElementById('btnCalculateFare');
+        const btnReq = document.getElementById('btnRequestDispatch');
+        const invoiceBox = document.getElementById('fareInvoiceBox');
+
+        btnCalc.addEventListener('click', () => {
+            const pickup = document.getElementById('dbTxtPickup').value.trim();
+            const drop = document.getElementById('dbTxtDrop').value.trim();
+
+            if (pickup === "" || drop === "") {
+                alert("Please fill in both coordinates to calculate transit data.");
+                return;
+            }
+            computeTariffMatrix();
+        });
+
+        function computeTariffMatrix() {
+            const basePrice = 150;
+            let simulatedDistance = mapDistance;
+            
+            if (!pickupMarker || !dropMarker) {
+                const pickup = document.getElementById('dbTxtPickup').value.trim();
+                const drop = document.getElementById('dbTxtDrop').value.trim();
+                const seed = (pickup.length * 3 + drop.length * 5) % 30;
+                simulatedDistance = +(4.2 + seed + Math.random() * 2).toFixed(1);
+            }
+            
+            const computedTotal = (basePrice + (simulatedDistance * selectedRatePerKM));
+
+            document.getElementById('invoiceBase').innerText = `LKR ${basePrice.toFixed(2)}`;
+            document.getElementById('invoiceDistance').innerText = `${simulatedDistance} KM`;
+            document.getElementById('invoiceTotal').innerText = `LKR ${computedTotal.toLocaleString('en-US', {minimumFractionDigits: 2, maximumFractionDigits: 2})}`;
+
+            invoiceBox.style.display = 'block';
+            btnReq.style.display = 'block';
+            btnCalc.innerText = "Re-Compute Vectors";
+
+            const mapMsg = document.getElementById('mapStatusMessage');
+            const mapPulse = document.getElementById('mapPulseNode');
+            
+            mapMsg.innerHTML = `<i class="fas fa-spinner fa-spin" style="color:var(--accent); font-size:20px; margin-bottom:10px; display:block;"></i>
+                                <span style="color:#ffffff; font-weight:600;">Locking GPS Vectors...</span><br>
+                                <span style="font-size:11px; color:var(--text-muted);">Syncing Route from ${document.getElementById('dbTxtPickup').value}</span>`;
+            
+            setTimeout(() => {
+                mapMsg.innerHTML = `<i class="fas fa-check-circle" style="color:var(--success); font-size:22px; margin-bottom:10px; display:block;"></i>
+                                    <span style="color:#ffffff; font-weight:700;">Path Locked Successfully</span><br>
+                                    <span style="font-size:12px; color:var(--text-muted); display:block; margin-top:4px;">Allocated Route Fleet: <b>${selectedFleetName}</b></span>`;
+                mapPulse.style.display = 'block';
+            }, 1200);
+        }
+
+        document.getElementById('dashboardBookingForm').addEventListener('submit', (e) => {
+            e.preventDefault();
+            const pickup = document.getElementById('dbTxtPickup').value.trim();
+            const drop = document.getElementById('dbTxtDrop').value.trim();
+            if (!pickup || !drop) return;
+
+            loader.classList.remove('fade-out');
+            document.querySelector('.loader-text').innerText = "Deploying Fleet Dispatch Unit...";
+
+            setTimeout(() => {
+                const bookingId = 'FTX-' + Math.floor(10000 + Math.random() * 90000);
+                const distText = document.getElementById('invoiceDistance').innerText;
+                const dist = parseFloat(distText) || 12.5;
+                const basePrice = 150;
+                const computedTotal = basePrice + (dist * selectedRatePerKM) + 50;
+
+                const history = JSON.parse(localStorage.getItem('fleetx_bookings') || '[]');
+                history.unshift({
+                    id: bookingId,
+                    service: selectedFleetName,
+                    pickup,
+                    drop,
+                    fare: computedTotal,
+                    date: new Date().toISOString(),
+                    status: 'pending'
+                });
+                localStorage.setItem('fleetx_bookings', JSON.stringify(history.slice(0, 10)));
+
+                alert(`SUCCESS! Your FleetX dispatch request has been submitted for approval. Transaction ID: ${bookingId}`);
+                window.location.reload();
+            }, 1800);
+        });
+
+        function renderDashboardHistory() {
+            const bookings = JSON.parse(localStorage.getItem('fleetx_bookings') || '[]');
+            const historyBody = document.getElementById('historyTableBody');
+            if (!historyBody) return;
+            historyBody.innerHTML = '';
+            
+            if (bookings.length === 0) {
+                historyBody.innerHTML = `<tr><td colspan="6" style="text-align:center;color:var(--text-muted);padding:20px;">No logged transit records found.</td></tr>`;
+                return;
+            }
+            
+            bookings.forEach(b => {
+                const tr = document.createElement('tr');
+                const dateObj = new Date(b.date);
+                const formattedDate = dateObj.toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' });
+                
+                let icon = 'fas fa-car';
+                if (b.service.includes('Prime')) icon = 'fas fa-car-side';
+                if (b.service.includes('Outstation')) icon = 'fas fa-route';
+                
+                let statusClass = 'completed';
+                if (b.status === 'pending') statusClass = 'pending';
+                if (b.status === 'cancelled' || b.status === 'rejected') statusClass = 'cancelled';
+                
+                tr.innerHTML = `
+                    <td style="font-family: monospace; font-weight: 700; color: #ffffff;">#${b.id}</td>
+                    <td>${formattedDate}</td>
+                    <td><i class="${icon}" style="color:var(--accent); margin-right: 5px;"></i> ${b.service}</td>
+                    <td>${b.pickup} &rarr; ${b.drop}</td>
+                    <td style="font-weight: 700; color: #ffffff;">LKR ${parseFloat(b.fare).toLocaleString('en-US', { minimumFractionDigits: 2 })}</td>
+                    <td><span class="status-badge ${statusClass}">${b.status}</span></td>
+                `;
+                historyBody.appendChild(tr);
+            });
+        }
+    </script>
+</body>
+</html>

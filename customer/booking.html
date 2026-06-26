@@ -1,0 +1,707 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Book your premium FleetX ride — City Ride, FleetX Prime or Outstation Drop with instant fixed fare estimates.">
+    <title>FleetX | Book a Ride — Choose Your Fleet</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+    <link rel="stylesheet" href="../css/style.css">
+    <style>
+        @media (min-width: 1200px) {
+            .booking-form-inner {
+                grid-template-columns: 1.1fr 1.2fr 1fr !important;
+            }
+        }
+        @media (max-width: 1199px) and (min-width: 969px) {
+            .booking-form-inner {
+                grid-template-columns: 1.2fr 1fr !important;
+            }
+            .booking-form-middle {
+                grid-column: span 2;
+                border-right: none !important;
+                border-top: 1px solid var(--border);
+            }
+        }
+        @media (max-width: 968px) {
+            .booking-form-inner {
+                grid-template-columns: 1fr !important;
+            }
+            .booking-form-middle {
+                border-right: none !important;
+                border-top: 1px solid var(--border);
+            }
+        }
+        /* Leaflet custom dark theme overrides for popups */
+        .leaflet-popup-content-wrapper, .leaflet-popup-tip {
+            background: #111 !important;
+            color: #fff !important;
+            border: 1px solid var(--border);
+        }
+    </style>
+</head>
+<body>
+
+    <div class="page-loader" id="pageLoader">
+        <div class="loader-spinner"></div>
+        <div class="loader-text">Loading Fleet...</div>
+    </div>
+
+    <!-- HEADER -->
+    <header id="mainHeader">
+        <a href="index.html" class="logo" style="display: flex; align-items: center; gap: 10px; text-decoration: none;">
+            <img src="../img/hed-logo.png" alt="FleetX Logo" style="height: 35px; width: auto; object-fit: contain;">
+            FLEET<span>X</span>
+        </a>
+        <nav>
+            <ul>
+                <li><a href="index.html">Home</a></li>
+                <li><a href="booking.html" class="active">Services</a></li>
+                <li><a href="index.html#how-it-works">How It Works</a></li>
+                <li><a href="about.html">About</a></li>
+                <li id="navAuthArea"></li>
+            </ul>
+        </nav>
+    </header>
+
+    <!-- BOOKING HERO -->
+    <section class="booking-hero page-wrapper">
+        <div class="booking-hero-bg"></div>
+        <div style="position:relative;z-index:10;max-width:700px;">
+            <div class="hero-badge" style="opacity:1;animation:none;">
+                <i class="fas fa-circle" style="font-size:8px;color:var(--success);"></i>
+                Fleet Available Now · Instant Confirmation
+            </div>
+            <h1 style="font-family:var(--font-display);font-size:4rem;font-weight:700;line-height:1.08;margin-bottom:20px;">
+                PICK YOUR RIDE.<br><span style="background:linear-gradient(135deg,#ffcc00,#ff9800);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;">FIX YOUR FARE.</span>
+            </h1>
+            <p style="font-size:17px;color:var(--text-muted);line-height:1.7;max-width:520px;">
+                Choose a service tier, enter your route, and get a guaranteed flat fare — no hidden charges, no surge pricing. Ever.
+            </p>
+        </div>
+    </section>
+
+    <!-- MAIN BOOKING SECTION -->
+    <section id="bookingSection" style="padding:80px 8% 100px;background:var(--bg-main);">
+
+        <!-- Section Title -->
+        <div class="section-title reveal" style="text-align:left;margin-bottom:0;">
+            <div class="section-label">Step 1</div>
+            <h2 style="font-size:2rem;">SELECT YOUR <span>FLEET TIER</span></h2>
+            <p style="text-align:left;margin-left:0;max-width:500px;margin-top:10px;">Choose the service that best matches your journey.</p>
+        </div>
+
+        <!-- TIER CARDS -->
+        <div class="tier-grid reveal">
+
+            <!-- City Ride -->
+            <div class="tier-card" id="tierCity" onclick="selectTier('city', 110, 'City Ride')">
+                <div class="tier-icon-wrap"><i class="fas fa-car"></i></div>
+                <div class="tier-name">City Ride</div>
+                <p class="tier-desc">Quick, affordable rides for everyday city travel. Compact cars and standard sedans.</p>
+                <ul class="tier-features">
+                    <li><i class="fas fa-check-circle"></i> Instant driver matching</li>
+                    <li><i class="fas fa-check-circle"></i> Up to 4 passengers</li>
+                    <li><i class="fas fa-check-circle"></i> Air-conditioned vehicle</li>
+                    <li><i class="fas fa-check-circle"></i> GPS tracked ride</li>
+                    <li><i class="fas fa-check-circle"></i> Fixed flat fare</li>
+                </ul>
+                <div class="tier-price">
+                    <span class="amount">LKR 110</span>
+                    <span class="unit">/ km + LKR 150 base</span>
+                </div>
+                <button class="tier-select-btn" id="btnCity">Select City Ride</button>
+            </div>
+
+            <!-- FleetX Prime -->
+            <div class="tier-card" id="tierPrime" onclick="selectTier('prime', 240, 'FleetX Prime')">
+                <div class="tier-popular-badge">Most Popular</div>
+                <div class="tier-icon-wrap"><i class="fas fa-car-side"></i></div>
+                <div class="tier-name">FleetX Prime</div>
+                <p class="tier-desc">Executive luxury sedans &amp; SUVs with elite chauffeurs for VIP and corporate travel.</p>
+                <ul class="tier-features">
+                    <li><i class="fas fa-check-circle"></i> Premium luxury vehicle</li>
+                    <li><i class="fas fa-check-circle"></i> Certified executive driver</li>
+                    <li><i class="fas fa-check-circle"></i> Meet &amp; greet service</li>
+                    <li><i class="fas fa-check-circle"></i> In-car water &amp; WiFi</li>
+                    <li><i class="fas fa-check-circle"></i> Priority dispatch</li>
+                </ul>
+                <div class="tier-price">
+                    <span class="amount">LKR 240</span>
+                    <span class="unit">/ km + LKR 350 base</span>
+                </div>
+                <button class="tier-select-btn" id="btnPrime">Select Prime</button>
+            </div>
+
+            <!-- Outstation -->
+            <div class="tier-card" id="tierOutstation" onclick="selectTier('outstation', 180, 'Outstation Drop')">
+                <div class="tier-icon-wrap"><i class="fas fa-route"></i></div>
+                <div class="tier-name">Outstation Drop</div>
+                <p class="tier-desc">Long-distance island-wide trips. Comfortable vans and spacious cars for family travel.</p>
+                <ul class="tier-features">
+                    <li><i class="fas fa-check-circle"></i> Island-wide coverage</li>
+                    <li><i class="fas fa-check-circle"></i> Up to 7 passengers</li>
+                    <li><i class="fas fa-check-circle"></i> Spacious luggage space</li>
+                    <li><i class="fas fa-check-circle"></i> Highway-rated vehicle</li>
+                    <li><i class="fas fa-check-circle"></i> Single flat fare</li>
+                </ul>
+                <div class="tier-price">
+                    <span class="amount">LKR 180</span>
+                    <span class="unit">/ km + LKR 250 base</span>
+                </div>
+                <button class="tier-select-btn" id="btnOutstation">Select Outstation</button>
+            </div>
+        </div>
+
+        <!-- BOOKING FORM (slides open after tier selection) -->
+        <div class="booking-form-panel" id="bookingFormPanel">
+            <div class="booking-form-inner">
+
+                <!-- LEFT: Route & Details -->
+                <div class="booking-form-left">
+                    <div class="booking-form-title">
+                        <i class="fas fa-map-marked-alt"></i>
+                        <span id="formTierLabel">City Ride</span> — Route Details
+                    </div>
+
+                    <!-- Pickup -->
+                    <div style="position:relative;margin-bottom:6px;">
+                        <div class="location-input-wrap">
+                            <i class="fas fa-map-marker-alt loc-icon" style="color:var(--accent);"></i>
+                            <input type="text" id="inputPickup" placeholder="Pickup location (city, street...)" oninput="updateFare()">
+                        </div>
+                        <div class="location-line"></div>
+                    </div>
+
+                    <!-- Dropoff -->
+                    <div class="location-input-wrap" style="margin-top:6px;">
+                        <i class="fas fa-flag-checkered loc-icon" style="color:var(--error);"></i>
+                        <input type="text" id="inputDrop" placeholder="Destination (city, landmark...)" oninput="updateFare()">
+                    </div>
+
+                    <!-- Date & Time -->
+                    <div style="margin-top:20px;margin-bottom:20px;">
+                        <div style="font-size:12px;font-weight:700;text-transform:uppercase;letter-spacing:1.5px;color:var(--text-muted);margin-bottom:12px;">
+                            <i class="fas fa-calendar-alt" style="margin-right:6px;color:var(--accent);"></i>Schedule
+                        </div>
+                        <div class="booking-input-row">
+                            <div style="position:relative;">
+                                <input type="date" id="inputDate" style="width:100%;padding:13px 14px;background:rgba(20,20,20,0.8);border:1px solid var(--border);border-radius:10px;color:var(--text-main);font-size:14px;font-family:var(--font-main);outline:none;transition:all 0.3s ease;cursor:pointer;color-scheme:dark;" oninput="updateFare()">
+                            </div>
+                            <div>
+                                <input type="time" id="inputTime" style="width:100%;padding:13px 14px;background:rgba(20,20,20,0.8);border:1px solid var(--border);border-radius:10px;color:var(--text-main);font-size:14px;font-family:var(--font-main);outline:none;transition:all 0.3s ease;cursor:pointer;color-scheme:dark;" oninput="updateFare()">
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Passengers -->
+                    <div>
+                        <div style="font-size:12px;font-weight:700;text-transform:uppercase;letter-spacing:1.5px;color:var(--text-muted);margin-bottom:12px;">
+                            <i class="fas fa-users" style="margin-right:6px;color:var(--accent);"></i>Passengers
+                        </div>
+                        <div class="pax-picker">
+                            <button class="pax-btn" onclick="changePax(-1)">−</button>
+                            <span class="pax-count" id="paxCount">1</span>
+                            <button class="pax-btn" onclick="changePax(1)">+</button>
+                            <span style="color:var(--text-muted);font-size:13px;margin-left:4px;">passenger(s)</span>
+                        </div>
+                    </div>
+
+                    <!-- Notes -->
+                    <div style="margin-top:20px;">
+                        <textarea id="inputNotes" rows="3" placeholder="Any special requests or notes for the driver..." style="width:100%;padding:14px;background:rgba(20,20,20,0.8);border:1px solid var(--border);border-radius:10px;color:var(--text-main);font-size:14px;font-family:var(--font-main);resize:none;outline:none;transition:all 0.3s ease;"></textarea>
+                    </div>
+                </div>
+
+                <!-- MIDDLE: Map Viewport -->
+                <div class="booking-form-middle" style="padding: 40px; border-right: 1px solid var(--border); display: flex; flex-direction: column; gap: 15px;">
+                    <div class="booking-form-title">
+                        <i class="fas fa-map-marked-alt"></i> Route Map
+                    </div>
+                    <p style="font-size:12px; color:var(--text-muted); line-height: 1.5; margin: 0;">
+                        Click on the map to set your <b>Pickup</b> (1st click) and <b>Destination</b> (2nd click) coordinates on Sri Lanka.
+                    </p>
+                    <div id="bookingMap" style="height: 320px; width: 100%; border-radius: 12px; border: 1px solid var(--border); z-index: 1;"></div>
+                    <button type="button" class="btn-secondary" onclick="clearMapMarkers()" style="padding: 10px 15px; font-size: 12px; align-self: flex-end; width: fit-content; margin-top: auto;">Clear Markers</button>
+                </div>
+
+                <!-- RIGHT: Fare Summary & Book -->
+                <div class="booking-form-right">
+                    <div>
+                        <div class="booking-form-title" style="margin-bottom:20px;">
+                            <i class="fas fa-receipt"></i> Fare Estimate
+                        </div>
+
+                        <!-- Selected tier summary -->
+                        <div style="display:flex;align-items:center;gap:12px;background:rgba(255,204,0,0.04);border:1px solid rgba(255,204,0,0.12);border-radius:12px;padding:14px 16px;margin-bottom:20px;">
+                            <div style="width:40px;height:40px;background:var(--accent);border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:18px;color:#000;flex-shrink:0;" id="fareTierIcon">
+                                <i class="fas fa-car"></i>
+                            </div>
+                            <div>
+                                <div style="font-weight:700;font-size:14px;" id="fareTierName">City Ride</div>
+                                <div style="color:var(--text-muted);font-size:12px;" id="fareTierRate">LKR 110 / km</div>
+                            </div>
+                            <div style="margin-left:auto;font-family:var(--font-display);font-size:18px;font-weight:700;color:var(--accent);" id="fareRateLabel">110</div>
+                        </div>
+
+                        <div class="fare-estimate-box" id="fareBox">
+                            <div class="fare-label">Fare Breakdown</div>
+                            <div class="fare-line">
+                                <span>Base fare</span>
+                                <span id="fareBase">LKR 150.00</span>
+                            </div>
+                            <div class="fare-line">
+                                <span>Estimated distance</span>
+                                <span id="fareKm">— km</span>
+                            </div>
+                            <div class="fare-line">
+                                <span>Rate per km</span>
+                                <span id="farePerKm">LKR 110</span>
+                            </div>
+                            <div class="fare-line">
+                                <span>Booking fee</span>
+                                <span>LKR 50.00</span>
+                            </div>
+                            <div class="fare-total">
+                                <span class="fare-total-label">Guaranteed Total</span>
+                                <span class="fare-total-amount" id="fareTotal">—</span>
+                            </div>
+                        </div>
+
+                        <!-- Empty state -->
+                        <div id="fareEmpty" style="text-align:center;padding:30px 0;color:var(--text-dim);">
+                            <i class="fas fa-route" style="font-size:32px;display:block;margin-bottom:12px;color:var(--text-dim);"></i>
+                            <span style="font-size:13px;">Enter pickup &amp; destination<br>to compute your fare</span>
+                        </div>
+                    </div>
+
+                    <!-- Book Button -->
+                    <div style="margin-top:24px;">
+                        <button class="btn-primary" id="bookNowBtn" onclick="handleBookNow()"
+                            style="width:100%;padding:16px;font-size:15px;letter-spacing:0.8px;border-radius:12px;display:flex;align-items:center;justify-content:center;gap:10px;">
+                            <i class="fas fa-bolt"></i> Book This Ride
+                        </button>
+                        <p style="text-align:center;margin-top:12px;font-size:12px;color:var(--text-dim);">
+                            <i class="fas fa-lock" style="margin-right:4px;"></i>
+                            Secure booking · No payment until arrival
+                        </p>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+
+    </section>
+
+    <!-- WHY CHOOSE FLEETX -->
+    <section style="padding:80px 8%;background:#0a0a0a;position:relative;">
+        <div style="position:absolute;top:0;left:0;right:0;height:1px;background:linear-gradient(to right,transparent,var(--border),transparent);"></div>
+        <div class="section-title reveal" style="margin-bottom:56px;">
+            <div class="section-label">Our Guarantee</div>
+            <h2>WHY RIDE WITH <span>FLEETX</span></h2>
+        </div>
+        <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:20px;">
+            <div class="reveal reveal-delay-1" style="text-align:center;padding:36px 24px;background:var(--bg-card);border:1px solid var(--border);border-radius:16px;transition:all 0.35s ease;" onmouseover="this.style.borderColor='rgba(255,204,0,0.15)';this.style.transform='translateY(-4px)'" onmouseout="this.style.borderColor='var(--border)';this.style.transform='translateY(0)'">
+                <div style="width:60px;height:60px;background:var(--accent-dim);border:1px solid rgba(255,204,0,0.12);border-radius:16px;display:flex;align-items:center;justify-content:center;font-size:26px;color:var(--accent);margin:0 auto 20px;"><i class="fas fa-tag"></i></div>
+                <h4 style="font-family:var(--font-display);font-size:17px;margin-bottom:10px;">Fixed Fares Always</h4>
+                <p style="color:var(--text-muted);font-size:14px;line-height:1.6;">The price we show is exactly what you pay. No surge, no surprises.</p>
+            </div>
+            <div class="reveal reveal-delay-2" style="text-align:center;padding:36px 24px;background:var(--bg-card);border:1px solid var(--border);border-radius:16px;transition:all 0.35s ease;" onmouseover="this.style.borderColor='rgba(255,204,0,0.15)';this.style.transform='translateY(-4px)'" onmouseout="this.style.borderColor='var(--border)';this.style.transform='translateY(0)'">
+                <div style="width:60px;height:60px;background:var(--accent-dim);border:1px solid rgba(255,204,0,0.12);border-radius:16px;display:flex;align-items:center;justify-content:center;font-size:26px;color:var(--accent);margin:0 auto 20px;"><i class="fas fa-shield-alt"></i></div>
+                <h4 style="font-family:var(--font-display);font-size:17px;margin-bottom:10px;">Verified Drivers</h4>
+                <p style="color:var(--text-muted);font-size:14px;line-height:1.6;">Every driver passes background checks, vehicle inspections, and training.</p>
+            </div>
+            <div class="reveal reveal-delay-3" style="text-align:center;padding:36px 24px;background:var(--bg-card);border:1px solid var(--border);border-radius:16px;transition:all 0.35s ease;" onmouseover="this.style.borderColor='rgba(255,204,0,0.15)';this.style.transform='translateY(-4px)'" onmouseout="this.style.borderColor='var(--border)';this.style.transform='translateY(0)'">
+                <div style="width:60px;height:60px;background:var(--accent-dim);border:1px solid rgba(255,204,0,0.12);border-radius:16px;display:flex;align-items:center;justify-content:center;font-size:26px;color:var(--accent);margin:0 auto 20px;"><i class="fas fa-satellite-dish"></i></div>
+                <h4 style="font-family:var(--font-display);font-size:17px;margin-bottom:10px;">Live GPS Tracking</h4>
+                <p style="color:var(--text-muted);font-size:14px;line-height:1.6;">Your family can track your ride in real time from pickup to destination.</p>
+            </div>
+            <div class="reveal reveal-delay-4" style="text-align:center;padding:36px 24px;background:var(--bg-card);border:1px solid var(--border);border-radius:16px;transition:all 0.35s ease;" onmouseover="this.style.borderColor='rgba(255,204,0,0.15)';this.style.transform='translateY(-4px)'" onmouseout="this.style.borderColor='var(--border)';this.style.transform='translateY(0)'">
+                <div style="width:60px;height:60px;background:var(--accent-dim);border:1px solid rgba(255,204,0,0.12);border-radius:16px;display:flex;align-items:center;justify-content:center;font-size:26px;color:var(--accent);margin:0 auto 20px;"><i class="fas fa-headset"></i></div>
+                <h4 style="font-family:var(--font-display);font-size:17px;margin-bottom:10px;">24/7 Support</h4>
+                <p style="color:var(--text-muted);font-size:14px;line-height:1.6;">Our operations team is always online for any assistance you need.</p>
+            </div>
+        </div>
+    </section>
+
+    <!-- BOOKING CONFIRMATION OVERLAY -->
+    <div class="booking-confirm-overlay" id="confirmOverlay">
+        <div class="booking-confirm-card">
+            <div class="confirm-icon"><i class="fas fa-check"></i></div>
+            <h2 style="font-family:var(--font-display);font-size:24px;font-weight:700;margin-bottom:8px;">Ride Confirmed!</h2>
+            <p style="color:var(--text-muted);font-size:14px;line-height:1.6;">Your FleetX vehicle has been dispatched. Driver details sent to your account.</p>
+            <div class="confirm-id" id="confirmId">FTX-00000</div>
+            <div style="background:rgba(20,20,20,0.8);border:1px solid var(--border);border-radius:12px;padding:18px;text-align:left;margin-bottom:28px;">
+                <div style="display:flex;justify-content:space-between;font-size:13px;color:var(--text-muted);margin-bottom:8px;">
+                    <span>Service</span><span id="confService" style="color:var(--text-main);font-weight:600;">City Ride</span>
+                </div>
+                <div style="display:flex;justify-content:space-between;font-size:13px;color:var(--text-muted);margin-bottom:8px;">
+                    <span>Pickup</span><span id="confPickup" style="color:var(--text-main);font-weight:600;max-width:60%;text-align:right;">—</span>
+                </div>
+                <div style="display:flex;justify-content:space-between;font-size:13px;color:var(--text-muted);margin-bottom:8px;">
+                    <span>Destination</span><span id="confDrop" style="color:var(--text-main);font-weight:600;max-width:60%;text-align:right;">—</span>
+                </div>
+                <div style="display:flex;justify-content:space-between;font-size:13px;color:var(--text-muted);">
+                    <span>Guaranteed Fare</span><span id="confFare" style="color:var(--accent);font-weight:700;font-size:16px;">—</span>
+                </div>
+            </div>
+            <div style="display:flex;gap:12px;">
+                <button class="btn-secondary" style="flex:1;padding:13px;" onclick="closeConfirm()">Back to Booking</button>
+                <a href="dashboard.html" class="btn-primary" style="flex:1;padding:13px;text-decoration:none;display:flex;align-items:center;justify-content:center;gap:8px;">
+                    <i class="fas fa-tachometer-alt" style="font-size:12px;"></i> My Dashboard
+                </a>
+            </div>
+        </div>
+    </div>
+
+    <!-- FOOTER -->
+    <footer class="main-footer">
+        <div class="footer-grid">
+            <div class="footer-col">
+                <a href="index.html" class="logo" style="font-size:22px;display:inline-flex;align-items:center;gap:10px;margin-bottom:20px;text-decoration:none;">
+                    <img src="../img/hed-logo.png" alt="FleetX Logo" style="height: 30px; width: auto; object-fit: contain;">
+                    FLEET<span>X</span>
+                </a>
+                <p>Sri Lanka's premier digital transit infrastructure — executive reliability, premium comfort, and completely transparent fixed-tariff travel.</p>
+                <div class="footer-social-links">
+                    <a href="#" aria-label="Facebook"><i class="fab fa-facebook-f"></i></a>
+                    <a href="#" aria-label="Instagram"><i class="fab fa-instagram"></i></a>
+                    <a href="#" aria-label="Twitter"><i class="fab fa-twitter"></i></a>
+                    <a href="#" aria-label="LinkedIn"><i class="fab fa-linkedin-in"></i></a>
+                </div>
+            </div>
+            <div class="footer-col">
+                <h4>Our Fleet</h4>
+                <ul>
+                    <li><a href="#bookingSection" onclick="selectTier('city',110,'City Ride')">City Ride (Budget)</a></li>
+                    <li><a href="#bookingSection" onclick="selectTier('prime',240,'FleetX Prime')">FleetX Prime (VIP)</a></li>
+                    <li><a href="#bookingSection" onclick="selectTier('outstation',180,'Outstation Drop')">Outstation Drops</a></li>
+                </ul>
+            </div>
+            <div class="footer-col">
+                <h4>Company</h4>
+                <ul>
+                    <li><a href="about.html">About FleetX</a></li>
+                    <li><a href="dashboard.html">My Dashboard</a></li>
+                    <li><a href="#">Terms of Service</a></li>
+                    <li><a href="#">Privacy Policy</a></li>
+                </ul>
+            </div>
+            <div class="footer-col">
+                <h4>Contact Terminal</h4>
+                <div class="footer-contact-item"><i class="fas fa-phone-alt"></i><span>+94 11 234 5678</span></div>
+                <div class="footer-contact-item"><i class="fas fa-envelope"></i><span>ops@fleetx.lk</span></div>
+                <div class="footer-contact-item"><i class="fas fa-map-marker-alt"></i><span>Colombo 03, Sri Lanka</span></div>
+            </div>
+        </div>
+        <div class="footer-bottom">
+            <p>&copy; 2026 FleetX Mobility Technologies. All Rights Reserved.</p>
+            <div class="footer-bottom-links">
+                <a href="#">Privacy</a><a href="#">Terms</a><a href="#">Cookies</a>
+            </div>
+        </div>
+    </footer>
+
+    <script src="auth.js"></script>
+    <script>
+        // ── Preloader & Header ────────────────────────────────────
+        const loader = document.getElementById('pageLoader');
+        window.addEventListener('load', () => setTimeout(() => loader.classList.add('fade-out'), 500));
+        const header = document.getElementById('mainHeader');
+        window.addEventListener('scroll', () => header.classList.toggle('scrolled', window.scrollY > 60));
+
+        // Scroll reveal
+        const reveals = document.querySelectorAll('.reveal');
+        const revObs = new IntersectionObserver(entries => {
+            entries.forEach(e => { if (e.isIntersecting) e.target.classList.add('visible'); });
+        }, { threshold: 0.08, rootMargin: '0px 0px -30px 0px' });
+        reveals.forEach(el => revObs.observe(el));
+
+        // ── Tier selection state ──────────────────────────────────
+        let selectedTier = null;
+        let selectedRate = 0;
+        let selectedBase = 150;
+        let selectedTierName = '';
+        let passengerCount = 1;
+
+        const TIER_CONFIG = {
+            city:       { icon: 'fas fa-car',      rate: 110, base: 150, maxPax: 4 },
+            prime:      { icon: 'fas fa-car-side',  rate: 240, base: 350, maxPax: 4 },
+            outstation: { icon: 'fas fa-route',     rate: 180, base: 250, maxPax: 7 }
+        };
+
+        let map = null, pickupMarker = null, dropMarker = null, routePolyline = null;
+
+        function initMap() {
+            if (map) return;
+            // Center of Sri Lanka (approx. Kandy/Central Province)
+            const slCenter = [7.8731, 80.7718];
+            map = L.map('bookingMap', {
+                zoomControl: true,
+                attributionControl: false
+            }).setView(slCenter, 7.5);
+
+            // Dark Matter Theme tiles from CartoDB (perfect for dark mode!)
+            L.tileLayer('https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png', {
+                maxZoom: 20
+            }).addTo(map);
+
+            // Click listener to set markers
+            map.on('click', onMapClick);
+        }
+
+        function onMapClick(e) {
+            const latlng = e.latlng;
+            
+            if (!pickupMarker) {
+                // Set Pickup Marker
+                pickupMarker = L.marker(latlng, {
+                    draggable: true,
+                    icon: L.icon({
+                        iconUrl: 'https://raw.githubusercontent.com/pointhi/leaflet-color-markers/master/img/marker-icon-2x-gold.png',
+                        shadowUrl: 'https://cdnjs.cloudflare.com/ajax/libs/leaflet/0.7.7/images/marker-shadow.png',
+                        iconSize: [25, 41],
+                        iconAnchor: [12, 41],
+                        popupAnchor: [1, -34],
+                        shadowSize: [41, 41]
+                    })
+                }).addTo(map).bindPopup("<b>Pickup Location</b>").openPopup();
+                
+                pickupMarker.on('dragend', updateRouteAndDistance);
+                document.getElementById('inputPickup').value = `Map Coordinate (${latlng.lat.toFixed(4)}, ${latlng.lng.toFixed(4)})`;
+                updateRouteAndDistance();
+            } else if (!dropMarker) {
+                // Set Drop Marker
+                dropMarker = L.marker(latlng, {
+                    draggable: true,
+                    icon: L.icon({
+                        iconUrl: 'https://raw.githubusercontent.com/pointhi/leaflet-color-markers/master/img/marker-icon-2x-red.png',
+                        shadowUrl: 'https://cdnjs.cloudflare.com/ajax/libs/leaflet/0.7.7/images/marker-shadow.png',
+                        iconSize: [25, 41],
+                        iconAnchor: [12, 41],
+                        popupAnchor: [1, -34],
+                        shadowSize: [41, 41]
+                    })
+                }).addTo(map).bindPopup("<b>Destination</b>").openPopup();
+                
+                dropMarker.on('dragend', updateRouteAndDistance);
+                document.getElementById('inputDrop').value = `Map Coordinate (${latlng.lat.toFixed(4)}, ${latlng.lng.toFixed(4)})`;
+                updateRouteAndDistance();
+            }
+        }
+
+        function clearMapMarkers() {
+            if (pickupMarker) {
+                map.removeLayer(pickupMarker);
+                pickupMarker = null;
+            }
+            if (dropMarker) {
+                map.removeLayer(dropMarker);
+                dropMarker = null;
+            }
+            if (routePolyline) {
+                map.removeLayer(routePolyline);
+                routePolyline = null;
+            }
+            document.getElementById('inputPickup').value = '';
+            document.getElementById('inputDrop').value = '';
+            updateFare();
+        }
+
+        function updateRouteAndDistance() {
+            if (!pickupMarker || !dropMarker) {
+                if (routePolyline) {
+                    map.removeLayer(routePolyline);
+                    routePolyline = null;
+                }
+                updateFare();
+                return;
+            }
+
+            const p1 = pickupMarker.getLatLng();
+            const p2 = dropMarker.getLatLng();
+
+            // Draw line
+            if (routePolyline) {
+                routePolyline.setLatLngs([p1, p2]);
+            } else {
+                routePolyline = L.polyline([p1, p2], { color: 'var(--accent)', weight: 4, dashArray: '5, 10' }).addTo(map);
+            }
+
+            // Fit map bounds
+            map.fitBounds(L.latLngBounds(p1, p2), { padding: [50, 50] });
+
+            // Calculate geodesic distance in km
+            const distanceMeters = p1.distanceTo(p2);
+            simDistance = parseFloat((distanceMeters / 1000).toFixed(1));
+
+            // Auto-fill input values if they are coordinates
+            if (document.getElementById('inputPickup').value.startsWith('Map Coordinate')) {
+                document.getElementById('inputPickup').value = `Map Coordinate (${p1.lat.toFixed(4)}, ${p1.lng.toFixed(4)})`;
+            }
+            if (document.getElementById('inputDrop').value.startsWith('Map Coordinate')) {
+                document.getElementById('inputDrop').value = `Map Coordinate (${p2.lat.toFixed(4)}, ${p2.lng.toFixed(4)})`;
+            }
+
+            updateFare();
+        }
+
+        function selectTier(id, rate, name) {
+            selectedTier = id;
+            selectedRate = rate;
+            selectedTierName = name;
+            const cfg = TIER_CONFIG[id];
+            selectedBase = cfg.base;
+
+            // Update card highlight
+            ['tierCity','tierPrime','tierOutstation'].forEach(c => {
+                document.getElementById(c).classList.remove('selected');
+            });
+            document.getElementById('tier' + id.charAt(0).toUpperCase() + id.slice(1)).classList.add('selected');
+
+            // Update form labels
+            document.getElementById('formTierLabel').textContent = name;
+            document.getElementById('fareTierName').textContent = name;
+            document.getElementById('fareTierRate').textContent = `LKR ${rate} / km`;
+            document.getElementById('fareTierIcon').innerHTML = `<i class="${cfg.icon}"></i>`;
+            document.getElementById('fareRateLabel').textContent = rate;
+            document.getElementById('fareBase').textContent = `LKR ${cfg.base.toFixed(2)}`;
+            document.getElementById('farePerKm').textContent = `LKR ${rate}`;
+
+            // Clamp passengers to max
+            if (passengerCount > cfg.maxPax) {
+                passengerCount = cfg.maxPax;
+                document.getElementById('paxCount').textContent = passengerCount;
+            }
+
+            // Show booking form
+            const panel = document.getElementById('bookingFormPanel');
+            panel.classList.add('visible');
+            setTimeout(() => {
+                panel.scrollIntoView({ behavior: 'smooth', block: 'start' });
+                // Initialize map inside the form container
+                initMap();
+                setTimeout(() => { if (map) map.invalidateSize(); }, 300);
+            }, 100);
+
+            // Set today's date and current time as default
+            const now = new Date();
+            const dateEl = document.getElementById('inputDate');
+            const timeEl = document.getElementById('inputTime');
+            if (!dateEl.value) dateEl.value = now.toISOString().split('T')[0];
+            if (!timeEl.value) {
+                const h = String(now.getHours()).padStart(2,'0');
+                const m = String(now.getMinutes()).padStart(2,'0');
+                timeEl.value = `${h}:${m}`;
+            }
+
+            updateFare();
+        }
+
+        // ── Passenger counter ─────────────────────────────────────
+        function changePax(delta) {
+            const cfg = TIER_CONFIG[selectedTier] || { maxPax: 7 };
+            passengerCount = Math.max(1, Math.min(cfg.maxPax, passengerCount + delta));
+            document.getElementById('paxCount').textContent = passengerCount;
+            updateFare();
+        }
+
+        // ── Live fare calculation ─────────────────────────────────
+        let simDistance = 0;
+        function updateFare() {
+            const pickup = document.getElementById('inputPickup').value.trim();
+            const drop = document.getElementById('inputDrop').value.trim();
+            const fareBox = document.getElementById('fareBox');
+            const fareEmpty = document.getElementById('fareEmpty');
+
+            if (!pickup || !drop || !selectedTier) {
+                fareBox.style.display = 'none';
+                fareEmpty.style.display = 'block';
+                return;
+            }
+
+            if (!pickupMarker || !dropMarker) {
+                // Simulate distance based on string length (demo)
+                const seed = (pickup.length * 3 + drop.length * 5) % 30;
+                simDistance = +(4.5 + seed + Math.random() * 3).toFixed(1);
+            }
+
+            const total = selectedBase + (simDistance * selectedRate) + 50;
+
+            document.getElementById('fareKm').textContent = `${simDistance} km (est.)`;
+            document.getElementById('fareTotal').textContent =
+                `LKR ${total.toLocaleString('en-US', { minimumFractionDigits: 2 })}`;
+
+            fareEmpty.style.display = 'none';
+            fareBox.style.display = 'block';
+        }
+
+        // ── Book Now handler ──────────────────────────────────────
+        function handleBookNow() {
+            const pickup = document.getElementById('inputPickup').value.trim();
+            const drop = document.getElementById('inputDrop').value.trim();
+
+            if (!selectedTier) { fxShowToast('Please select a fleet tier first.', 'error'); return; }
+            if (!pickup || !drop) { fxShowToast('Please enter pickup and destination.', 'error'); return; }
+
+            const date = document.getElementById('inputDate').value;
+            const time = document.getElementById('inputTime').value;
+            if (!date || !time) { fxShowToast('Please set your pickup date and time.', 'error'); return; }
+
+            // Require auth before booking
+            fxRequireAuth((user) => {
+                proceedToBook(user, pickup, drop);
+            }, 'book');
+        }
+
+        function proceedToBook(user, pickup, drop) {
+            const btn = document.getElementById('bookNowBtn');
+            btn.disabled = true;
+            btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Dispatching...';
+
+            setTimeout(() => {
+                // Generate booking ID
+                const bookingId = 'FTX-' + Math.floor(10000 + Math.random() * 90000);
+                const cfg = TIER_CONFIG[selectedTier];
+                const total = selectedBase + (simDistance * selectedRate) + 50;
+
+                // Save to localStorage history
+                const history = JSON.parse(localStorage.getItem('fleetx_bookings') || '[]');
+                history.unshift({
+                    id: bookingId, service: selectedTierName, pickup, drop,
+                    fare: total, date: new Date().toISOString(), status: 'pending'
+                });
+                localStorage.setItem('fleetx_bookings', JSON.stringify(history.slice(0, 10)));
+
+                // Show confirmation
+                document.getElementById('confirmId').textContent = bookingId;
+                document.getElementById('confService').textContent = selectedTierName;
+                document.getElementById('confPickup').textContent = pickup;
+                document.getElementById('confDrop').textContent = drop;
+                document.getElementById('confFare').textContent =
+                    `LKR ${total.toLocaleString('en-US', { minimumFractionDigits: 2 })}`;
+
+                document.getElementById('confirmOverlay').classList.add('open');
+
+                btn.disabled = false;
+                btn.innerHTML = '<i class="fas fa-bolt"></i> Book This Ride';
+            }, 1800);
+        }
+
+        function closeConfirm() {
+            document.getElementById('confirmOverlay').classList.remove('open');
+        }
+
+        // ── Init: pre-select tier if URL has ?tier=... ────────────
+        const urlParams = new URLSearchParams(window.location.search);
+        const tierParam = urlParams.get('tier');
+        if (tierParam && TIER_CONFIG[tierParam]) {
+            window.addEventListener('DOMContentLoaded', () => {
+                setTimeout(() => selectTier(tierParam, TIER_CONFIG[tierParam].rate, tierParam === 'city' ? 'City Ride' : tierParam === 'prime' ? 'FleetX Prime' : 'Outstation Drop'), 600);
+            });
+        }
+    </script>
+</body>
+</html>
