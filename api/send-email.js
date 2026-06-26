@@ -56,6 +56,8 @@ module.exports = async function handler(req, res) {
         </div>
     `;
 
+    const textContent = `FLEETX - RIDE CONFIRMATION\n\nYour dispatch request #${booking.id} has been confirmed.\n\nService Tier: ${booking.service || 'City Ride'}\nPickup: ${booking.pickup || '—'}\nDestination: ${booking.drop || '—'}\nGuaranteed Fare: LKR ${fareFormatted}\n\n24/7 Operations Support: +94 11 234 5678 | ops@fleetx.lk`;
+
     try {
         const response = await fetch('https://api.resend.com/emails', {
             method: 'POST',
@@ -65,8 +67,10 @@ module.exports = async function handler(req, res) {
             },
             body: JSON.stringify({
                 from: 'FleetX Dispatch <dispatch@bitsync.site>',
+                reply_to: 'ops@bitsync.site',
                 to: [passengerEmail],
-                subject: 'Ride Confirmed (#' + booking.id + ') — FleetX Dispatch',
+                subject: `FleetX Dispatch Request #${booking.id} Confirmed`,
+                text: textContent,
                 html: emailHtml
             })
         });
