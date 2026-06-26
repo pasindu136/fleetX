@@ -278,7 +278,7 @@
                 <li><div class="admin-menu-item" onclick="switchSection('users', this)"><i class="fas fa-users"></i> User Management</div></li>
             </ul>
             <div style="border-top:1px solid var(--border); padding-top:20px; display:flex; flex-direction:column; gap:10px;">
-                <a href="../customer/index.html" class="admin-menu-item" style="padding:10px 16px;"><i class="fas fa-external-link-alt"></i> Exit Terminal</a>
+                <a href="../index.html" class="admin-menu-item" style="padding:10px 16px;"><i class="fas fa-external-link-alt"></i> Exit Terminal</a>
                 <a href="#" class="admin-menu-item" style="padding:10px 16px; color:var(--error);" onclick="fxLogout(); return false;"><i class="fas fa-sign-out-alt"></i> Sign Out</a>
             </div>
         </aside>
@@ -446,13 +446,13 @@
     </div>
 
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-    <script src="../customer/auth.js"></script>
+    <script src="../auth.js"></script>
     <script>
         // ── Auth Guard for Admin Panel ──────────────────────────────────
         document.addEventListener('DOMContentLoaded', () => {
             const user = fxGetUser();
             if (!user || user.role !== 'admin') {
-                window.location.href = '../customer/index.html?login_trigger=admin';
+                window.location.href = '../index.html?login_trigger=admin';
             } else {
                 document.getElementById('adminNameDisplay').textContent = user.name;
                 initDashboard();

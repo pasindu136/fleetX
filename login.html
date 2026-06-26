@@ -1,0 +1,531 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="FleetX Terminal Login — Sign in or register for Sri Lanka's premium digital transit platform.">
+    <title>FleetX | Passenger Terminal Authorization</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="css/style.css">
+    <style>
+        .auth-page-wrapper {
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 100px 20px 60px;
+            position: relative;
+            background: #050505;
+            overflow: hidden;
+        }
+
+        .auth-glow-bg-1 {
+            position: absolute;
+            top: -10%;
+            left: 15%;
+            width: 500px;
+            height: 500px;
+            background: radial-gradient(circle, rgba(255, 204, 0, 0.12) 0%, transparent 70%);
+            filter: blur(60px);
+            z-index: 1;
+            animation: pulseGlow 6s infinite alternate;
+        }
+
+        .auth-glow-bg-2 {
+            position: absolute;
+            bottom: -10%;
+            right: 15%;
+            width: 600px;
+            height: 600px;
+            background: radial-gradient(circle, rgba(255, 100, 0, 0.08) 0%, transparent 70%);
+            filter: blur(80px);
+            z-index: 1;
+            animation: pulseGlow 8s infinite alternate-reverse;
+        }
+
+        @keyframes pulseGlow {
+            0% { transform: scale(1); opacity: 0.7; }
+            100% { transform: scale(1.2); opacity: 1; }
+        }
+
+        .auth-card {
+            position: relative;
+            z-index: 10;
+            background: rgba(16, 16, 16, 0.82);
+            backdrop-filter: blur(32px);
+            -webkit-backdrop-filter: blur(32px);
+            border: 1px solid rgba(255, 204, 0, 0.18);
+            box-shadow: 0 25px 60px rgba(0, 0, 0, 0.9), 0 0 40px rgba(255, 204, 0, 0.05);
+            border-radius: 20px;
+            padding: 48px 42px;
+            max-width: 480px;
+            width: 100%;
+            transition: all 0.4s ease;
+        }
+
+        .auth-card-header {
+            text-align: center;
+            margin-bottom: 36px;
+        }
+
+        .auth-logo {
+            font-family: var(--font-display, 'Space Grotesk', sans-serif);
+            font-size: 32px;
+            font-weight: 800;
+            letter-spacing: 3px;
+            color: #ffffff;
+            text-decoration: none;
+            display: inline-flex;
+            align-items: center;
+            gap: 10px;
+            margin-bottom: 12px;
+        }
+
+        .auth-logo span {
+            color: var(--accent, #ffcc00);
+        }
+
+        .auth-sub {
+            color: #888888;
+            font-size: 14px;
+            line-height: 1.5;
+        }
+
+        .auth-tab-box {
+            display: flex;
+            background: rgba(8, 8, 8, 0.9);
+            border: 1px solid #222222;
+            border-radius: 12px;
+            padding: 5px;
+            margin-bottom: 32px;
+            position: relative;
+        }
+
+        .auth-tab-btn {
+            flex: 1;
+            background: transparent;
+            border: none;
+            color: #777777;
+            font-size: 14px;
+            font-weight: 700;
+            padding: 12px 0;
+            cursor: pointer;
+            border-radius: 8px;
+            transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            position: relative;
+            z-index: 2;
+        }
+
+        .auth-tab-btn.active {
+            color: #000000;
+            background: var(--accent, #ffcc00);
+            box-shadow: 0 4px 20px rgba(255, 204, 0, 0.35);
+        }
+
+        .auth-input-container {
+            display: flex;
+            align-items: center;
+            gap: 14px;
+            background: rgba(10, 10, 10, 0.9);
+            border: 1px solid #262626;
+            border-radius: 12px;
+            padding: 0 18px;
+            margin-bottom: 18px;
+            transition: all 0.3s ease;
+        }
+
+        .auth-input-container:focus-within {
+            border-color: var(--accent, #ffcc00);
+            background: #0a0a0a;
+            box-shadow: 0 0 0 4px rgba(255, 204, 0, 0.08);
+            transform: translateY(-1px);
+        }
+
+        .auth-input-container i {
+            color: #666666;
+            font-size: 16px;
+            transition: color 0.3s;
+        }
+
+        .auth-input-container:focus-within i {
+            color: var(--accent, #ffcc00);
+        }
+
+        .auth-input-container input {
+            flex: 1;
+            background: transparent;
+            border: none;
+            color: #ffffff;
+            font-size: 14.5px;
+            padding: 16px 0;
+            outline: none;
+            font-family: inherit;
+        }
+
+        .auth-input-container input::placeholder {
+            color: #555555;
+        }
+
+        .auth-eye-btn {
+            background: transparent;
+            border: none;
+            color: #666666;
+            cursor: pointer;
+            font-size: 15px;
+            padding: 8px;
+            transition: color 0.2s;
+        }
+
+        .auth-eye-btn:hover {
+            color: #ffffff;
+        }
+
+        .auth-submit-btn {
+            width: 100%;
+            background: var(--accent, #ffcc00);
+            color: #000000;
+            border: none;
+            padding: 16px;
+            border-radius: 12px;
+            font-size: 15px;
+            font-weight: 800;
+            text-transform: uppercase;
+            letter-spacing: 1.5px;
+            cursor: pointer;
+            transition: all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+            margin-top: 10px;
+            box-shadow: 0 8px 25px rgba(255, 204, 0, 0.25);
+        }
+
+        .auth-submit-btn:hover {
+            background: #ffe033;
+            transform: translateY(-2px);
+            box-shadow: 0 12px 30px rgba(255, 204, 0, 0.45);
+        }
+
+        .auth-submit-btn:active {
+            transform: translateY(0);
+        }
+
+        .auth-divider {
+            display: flex;
+            align-items: center;
+            margin: 32px 0 24px;
+            color: #666666;
+            font-size: 12px;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+        }
+
+        .auth-divider::before,
+        .auth-divider::after {
+            content: '';
+            flex: 1;
+            height: 1px;
+            background: #222222;
+        }
+
+        .auth-divider span {
+            padding: 0 16px;
+        }
+
+        .social-btn-group {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 14px;
+        }
+
+        .social-auth-btn {
+            background: rgba(255, 255, 255, 0.04);
+            border: 1px solid #222222;
+            color: #e0e0e0;
+            padding: 14px;
+            border-radius: 10px;
+            font-size: 13.5px;
+            font-weight: 600;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+            transition: all 0.25s ease;
+        }
+
+        .social-auth-btn:hover {
+            background: rgba(255, 255, 255, 0.08);
+            border-color: #444444;
+            color: #ffffff;
+            transform: translateY(-1px);
+        }
+
+        .auth-footer-note {
+            text-align: center;
+            margin-top: 32px;
+            color: #777777;
+            font-size: 13px;
+        }
+
+        .auth-footer-note a {
+            color: var(--accent, #ffcc00);
+            text-decoration: none;
+            font-weight: 600;
+        }
+
+        .auth-footer-note a:hover {
+            text-decoration: underline;
+        }
+
+        .auth-msg-banner {
+            padding: 12px 16px;
+            border-radius: 8px;
+            font-size: 13px;
+            margin-bottom: 20px;
+            display: none;
+            line-height: 1.4;
+        }
+
+        .auth-msg-error {
+            background: rgba(255, 61, 87, 0.1);
+            border: 1px solid rgba(255, 61, 87, 0.3);
+            color: #ff3d57;
+        }
+
+        .auth-msg-success {
+            background: rgba(0, 230, 118, 0.1);
+            border: 1px solid rgba(0, 230, 118, 0.3);
+            color: #00e676;
+        }
+
+        @media (max-width: 500px) {
+            .auth-card { padding: 36px 24px; border-radius: 16px; }
+            .social-btn-group { grid-template-columns: 1fr; }
+        }
+    </style>
+</head>
+
+<body>
+
+    <!-- HEADER -->
+    <header id="mainHeader">
+        <a href="index.html" class="logo" style="display: flex; align-items: center; gap: 10px; text-decoration: none;">
+            <img src="img/hed-logo.png" alt="FleetX Logo" style="height: 35px; width: auto; object-fit: contain;">
+            FLEET<span>X</span>
+        </a>
+        <nav>
+            <ul>
+                <li><a href="index.html">Home</a></li>
+                <li><a href="booking.html">Services</a></li>
+                <li><a href="index.html#how-it-works">How It Works</a></li>
+                <li><a href="dashboard.html">Dashboard</a></li>
+                <li><a href="about.html">About</a></li>
+                <li id="navAuthArea"></li>
+            </ul>
+        </nav>
+    </header>
+
+    <!-- AUTHENTICATION PAGE -->
+    <main class="auth-page-wrapper">
+        <div class="auth-glow-bg-1"></div>
+        <div class="auth-glow-bg-2"></div>
+
+        <div class="auth-card">
+            <div class="auth-card-header">
+                <a href="index.html" class="auth-logo">
+                    <img src="img/hed-logo.png" alt="Logo" style="height: 38px;"> FLEET<span>X</span>
+                </a>
+                <p class="auth-sub" id="authSubTitle">Enter your credentials to access the passenger hub</p>
+            </div>
+
+            <!-- TABS -->
+            <div class="auth-tab-box">
+                <button type="button" class="auth-tab-btn active" id="tabBtnLogin" onclick="switchAuthMode('login')">Sign In</button>
+                <button type="button" class="auth-tab-btn" id="tabBtnRegister" onclick="switchAuthMode('register')">Register</button>
+            </div>
+
+            <!-- MESSAGE BANNER -->
+            <div id="authBanner" class="auth-msg-banner"></div>
+
+            <!-- FORM -->
+            <form id="authPageForm" autocomplete="off" onsubmit="handleAuthSubmit(event)">
+                <div class="auth-input-container" id="boxName" style="display: none;">
+                    <i class="fas fa-user"></i>
+                    <input type="text" id="inpName" placeholder="Full Name" autocomplete="name">
+                </div>
+
+                <div class="auth-input-container">
+                    <i class="fas fa-envelope"></i>
+                    <input type="email" id="inpEmail" placeholder="Email Address" required autocomplete="email">
+                </div>
+
+                <div class="auth-input-container">
+                    <i class="fas fa-lock"></i>
+                    <input type="password" id="inpPassword" placeholder="Password (min. 6 characters)" required autocomplete="current-password">
+                    <button type="button" class="auth-eye-btn" onclick="togglePasswordVisibility('inpPassword', this)" aria-label="Toggle password">
+                        <i class="fas fa-eye"></i>
+                    </button>
+                </div>
+
+                <div id="loginExtrasRow" style="display: flex; justify-content: space-between; align-items: center; margin: 4px 0 22px; font-size: 13px;">
+                    <label style="display: flex; align-items: center; gap: 8px; color: #888; cursor: pointer;">
+                        <input type="checkbox" style="accent-color: var(--accent);"> Remember session
+                    </label>
+                    <a href="#" onclick="showAuthBanner('Please contact administrator at ops@fleetx.lk for password recovery.', 'error'); return false;" style="color: var(--accent); text-decoration: none; font-weight: 600;">Forgot password?</a>
+                </div>
+
+                <button type="submit" class="auth-submit-btn" id="btnSubmit">
+                    <span id="txtSubmit">Sign In &amp; Continue</span>
+                    <i class="fas fa-arrow-right"></i>
+                </button>
+            </form>
+
+            <div class="auth-divider"><span>Or continue via</span></div>
+
+            <div class="social-btn-group">
+                <button type="button" class="social-auth-btn" onclick="showAuthBanner('Google SSO OAuth provider integration active soon.', 'error')">
+                    <i class="fab fa-google" style="color: #ea4335; font-size: 16px;"></i> Google
+                </button>
+                <button type="button" class="social-auth-btn" onclick="showAuthBanner('Facebook SSO OAuth provider integration active soon.', 'error')">
+                    <i class="fab fa-facebook-f" style="color: #1877f2; font-size: 16px;"></i> Facebook
+                </button>
+            </div>
+
+            <div class="auth-footer-note" id="authBottomNote">
+                New passenger node? <a href="#" onclick="switchAuthMode('register'); return false;">Create free account</a>
+            </div>
+        </div>
+    </main>
+
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script src="auth.js"></script>
+    <script>
+        let currentAuthMode = 'login';
+
+        function switchAuthMode(mode) {
+            currentAuthMode = mode;
+            const tabLogin = document.getElementById('tabBtnLogin');
+            const tabReg = document.getElementById('tabBtnRegister');
+            const boxName = document.getElementById('boxName');
+            const extrasRow = document.getElementById('loginExtrasRow');
+            const txtSubmit = document.getElementById('txtSubmit');
+            const subTitle = document.getElementById('authSubTitle');
+            const btmNote = document.getElementById('authBottomNote');
+            const banner = document.getElementById('authBanner');
+
+            banner.style.display = 'none';
+
+            if (mode === 'login') {
+                tabLogin.classList.add('active');
+                tabReg.classList.remove('active');
+                boxName.style.display = 'none';
+                extrasRow.style.display = 'flex';
+                txtSubmit.textContent = 'Sign In & Continue';
+                subTitle.textContent = 'Enter your credentials to access the passenger hub';
+                btmNote.innerHTML = 'New passenger node? <a href="#" onclick="switchAuthMode(\'register\'); return false;">Create free account</a>';
+                document.getElementById('inpPassword').setAttribute('autocomplete', 'current-password');
+            } else {
+                tabReg.classList.add('active');
+                tabLogin.classList.remove('active');
+                boxName.style.display = 'flex';
+                extrasRow.style.display = 'none';
+                txtSubmit.textContent = 'Register Account';
+                subTitle.textContent = 'Create a new passenger node identity in 60 seconds';
+                btmNote.innerHTML = 'Already registered? <a href="#" onclick="switchAuthMode(\'login\'); return false;">Sign In here</a>';
+                document.getElementById('inpPassword').setAttribute('autocomplete', 'new-password');
+            }
+        }
+
+        function togglePasswordVisibility(inputId, btn) {
+            const inp = document.getElementById(inputId);
+            const icon = btn.querySelector('i');
+            if (inp.type === 'password') {
+                inp.type = 'text';
+                icon.className = 'fas fa-eye-slash';
+            } else {
+                inp.type = 'password';
+                icon.className = 'fas fa-eye';
+            }
+        }
+
+        function showAuthBanner(msg, type = 'error') {
+            const banner = document.getElementById('authBanner');
+            banner.className = 'auth-msg-banner ' + (type === 'error' ? 'auth-msg-error' : 'auth-msg-success');
+            banner.innerHTML = '<i class="fas fa-' + (type === 'error' ? 'exclamation-circle' : 'check-circle') + '"></i> ' + msg;
+            banner.style.display = 'block';
+        }
+
+        async function handleAuthSubmit(e) {
+            e.preventDefault();
+            const email = document.getElementById('inpEmail').value.trim();
+            const password = document.getElementById('inpPassword').value;
+            const name = document.getElementById('inpName').value.trim();
+            const btn = document.getElementById('btnSubmit');
+            const txt = document.getElementById('txtSubmit');
+
+            if (!email || !password) return;
+            if (password.length < 6) {
+                showAuthBanner('Password must contain at least 6 characters.', 'error');
+                return;
+            }
+
+            if (typeof supabase === 'undefined' || !supabase) {
+                showAuthBanner('Supabase terminal connection failed. Please verify network status.', 'error');
+                return;
+            }
+
+            btn.disabled = true;
+            btn.style.opacity = '0.7';
+            txt.textContent = 'Processing...';
+
+            try {
+                if (currentAuthMode === 'register') {
+                    const profileName = name || email.split('@')[0];
+                    const { data, error } = await supabase.auth.signUp({
+                        email: email,
+                        password: password,
+                        options: { data: { name: profileName } }
+                    });
+
+                    if (error) throw error;
+
+                    if (data.user && !data.session) {
+                        showAuthBanner('Registration successful! Please verify your email address before signing in.', 'success');
+                        btn.disabled = false;
+                        btn.style.opacity = '1';
+                        txt.textContent = 'Register Account';
+                    } else {
+                        showAuthBanner('Authorization successful! Redirecting terminal...', 'success');
+                    }
+                } else {
+                    // Login
+                    const { data, error } = await supabase.auth.signInWithPassword({
+                        email: email,
+                        password: password
+                    });
+
+                    if (error) throw error;
+                    showAuthBanner('Authentication verified! Entering terminal...', 'success');
+                }
+            } catch (err) {
+                showAuthBanner(err.message || 'Authorization failed.', 'error');
+                btn.disabled = false;
+                btn.style.opacity = '1';
+                txt.textContent = currentAuthMode === 'login' ? 'Sign In & Continue' : 'Register Account';
+            }
+        }
+
+        // Check if URL requested register tab initially
+        window.addEventListener('DOMContentLoaded', () => {
+            const params = new URLSearchParams(window.location.search);
+            if (params.get('mode') === 'register') switchAuthMode('register');
+        });
+    </script>
+</body>
+
+</html>
