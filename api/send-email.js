@@ -64,7 +64,7 @@ module.exports = async function handler(req, res) {
                 'Content-Type': 'application/json'
             },
             body: JSON.stringify({
-                from: 'FleetX Dispatch <onboarding@resend.dev>',
+                from: 'FleetX Dispatch <dispatch@bitsync.site>',
                 to: [passengerEmail],
                 subject: 'Ride Confirmed (#' + booking.id + ') — FleetX Dispatch',
                 html: emailHtml
