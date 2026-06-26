@@ -17,7 +17,7 @@ module.exports = async function handler(req, res) {
         return res.status(400).json({ success: false, error: 'Missing booking details or passenger email' });
     }
 
-    const RESEND_API_KEY = 're_A7t4eX9Q_8ev4G4wKUNbj5QaRpCQXjax3';
+    const RESEND_API_KEY = 're_LCHt2fDi_8mRbBmfnuQCm46HWnc4KykSx';
     const passengerEmail = booking.user_email;
     const fareFormatted = parseFloat(booking.fare || 0).toLocaleString('en-US', { minimumFractionDigits: 2 });
 
