@@ -18,7 +18,7 @@ module.exports = async function handler(req, res) {
     }
 
     const RESEND_API_KEY = 're_LCHt2fDi_8mRbBmfnuQCm46HWnc4KykSx';
-    const SMS_API_TOKEN = '585|quoYlvu9KBpRefBdBJYw7BLl4dPcTaVbVzctQEPY';
+    const SMS_API_TOKEN = '585|qUoYlvu9KBpRefBdBJYw7BL14dPcTaVbVzctQEPY';
 
     const passengerEmail = booking.user_email;
     const fareFormatted = parseFloat(booking.fare || 0).toLocaleString('en-US', { minimumFractionDigits: 2 });
