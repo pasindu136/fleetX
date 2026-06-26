@@ -17,8 +17,8 @@ module.exports = async function handler(req, res) {
         return res.status(400).json({ success: false, error: 'Missing booking details' });
     }
 
-    const RESEND_API_KEY = 're_LCHt2fDi_8mRbBmfnuQCm46HWnc4KykSx';
-    const SMS_API_TOKEN = '585|qUoYlvu9KBpRefBdBJYw7BL14dPcTaVbVzctQEPY';
+    const RESEND_API_KEY = process.env.RESEND_API_KEY;
+    const SMS_API_TOKEN = process.env.SMS_API_TOKEN;
 
     const passengerEmail = booking.user_email;
     const fareFormatted = parseFloat(booking.fare || 0).toLocaleString('en-US', { minimumFractionDigits: 2 });
@@ -138,7 +138,7 @@ module.exports = async function handler(req, res) {
     if (smsRecipient) {
         const smsPayload = {
             recipient: smsRecipient,
-            sender_id: 'SMSAPI Demo',
+            sender_id: process.env.SMS_SENDER_ID || 'SMSAPI Demo',
             type: 'plain',
             message: smsText
         };
