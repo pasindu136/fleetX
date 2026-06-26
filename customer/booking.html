@@ -404,6 +404,7 @@
         </div>
     </footer>
 
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <script src="auth.js"></script>
     <script>
         // ── Preloader & Header ────────────────────────────────────
@@ -656,24 +657,37 @@
             }, 'book');
         }
 
-        function proceedToBook(user, pickup, drop) {
+        async function proceedToBook(user, pickup, drop) {
             const btn = document.getElementById('bookNowBtn');
             btn.disabled = true;
             btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Dispatching...';
 
-            setTimeout(() => {
-                // Generate booking ID
-                const bookingId = 'FTX-' + Math.floor(10000 + Math.random() * 90000);
-                const cfg = TIER_CONFIG[selectedTier];
-                const total = selectedBase + (simDistance * selectedRate) + 50;
+            const bookingId = 'FTX-' + Math.floor(10000 + Math.random() * 90000);
+            const total = selectedBase + (simDistance * selectedRate) + 50;
 
-                // Save to localStorage history
-                const history = JSON.parse(localStorage.getItem('fleetx_bookings') || '[]');
-                history.unshift({
-                    id: bookingId, service: selectedTierName, pickup, drop,
-                    fare: total, date: new Date().toISOString(), status: 'pending'
-                });
-                localStorage.setItem('fleetx_bookings', JSON.stringify(history.slice(0, 10)));
+            if (!supabase) {
+                fxShowToast('Database connection offline.', 'error');
+                btn.disabled = false;
+                btn.innerHTML = '<i class="fas fa-bolt"></i> Book This Ride';
+                return;
+            }
+
+            try {
+                const { error } = await supabase
+                    .from('bookings')
+                    .insert({
+                        id: bookingId,
+                        user_id: user.id,
+                        user_email: user.email,
+                        service: selectedTierName,
+                        pickup: pickup,
+                        drop: drop,
+                        fare: total,
+                        date: new Date().toISOString(),
+                        status: 'pending'
+                    });
+
+                if (error) throw error;
 
                 // Show confirmation
                 document.getElementById('confirmId').textContent = bookingId;
@@ -684,10 +698,13 @@
                     `LKR ${total.toLocaleString('en-US', { minimumFractionDigits: 2 })}`;
 
                 document.getElementById('confirmOverlay').classList.add('open');
-
+            } catch (err) {
+                console.error(err);
+                fxShowToast('Booking failed: ' + (err.message || err), 'error');
+            } finally {
                 btn.disabled = false;
                 btn.innerHTML = '<i class="fas fa-bolt"></i> Book This Ride';
-            }, 1800);
+            }
         }
 
         function closeConfirm() {

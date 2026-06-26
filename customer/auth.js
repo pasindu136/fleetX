@@ -1,10 +1,18 @@
 /**
  * FleetX Shared Auth System
- * Handles login state across all pages using localStorage.
+ * Handles login state across all pages using Supabase and localStorage.
  * Include this script in every page AFTER the header HTML.
  */
 
 const FX_AUTH_KEY = 'fleetx_session';
+
+const SUPABASE_URL = 'https://vrjgtbvdodggaywqcxzq.supabase.co';
+const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InZyamd0YnZkb2RnZ2F5d3FjeHpxIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODI0NzE3MzksImV4cCI6MjA5ODA0NzczOX0.-U5sUcwwK2InlC2LqHse-nphqmQuETD5ZhxMPO46Gr8';
+let supabase = null;
+
+if (typeof window.supabase !== 'undefined') {
+    supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+}
 
 // ── Core helpers ────────────────────────────────────────────────
 function fxGetUser() {
@@ -49,18 +57,23 @@ function fxInitNav() {
 
         // Toggle dropdown on click
         const chip = document.getElementById('fxNavUser');
-        chip.addEventListener('click', (e) => {
-            e.stopPropagation();
-            chip.classList.toggle('open');
-        });
-        document.addEventListener('click', () => chip.classList.remove('open'));
+        if (chip) {
+            chip.addEventListener('click', (e) => {
+                e.stopPropagation();
+                chip.classList.toggle('open');
+            });
+            document.addEventListener('click', () => chip.classList.remove('open'));
+        }
     } else {
         area.innerHTML = `
             <button class="btn-primary fx-login-trigger" id="fxLoginBtn"
                 style="padding:9px 22px;font-size:13px;display:flex;align-items:center;gap:8px;">
                 <i class="fas fa-lock" style="font-size:11px;"></i> Login
             </button>`;
-        document.getElementById('fxLoginBtn').addEventListener('click', fxOpenAuthPanel);
+        const loginBtn = document.getElementById('fxLoginBtn');
+        if (loginBtn) {
+            loginBtn.addEventListener('click', () => fxOpenAuthPanel());
+        }
     }
 }
 
@@ -161,12 +174,14 @@ function fxSwitchTab(tab) {
     const nameField = document.getElementById('fxFieldName');
     const extras = document.getElementById('fxLoginExtras');
     const submitText = document.getElementById('fxSubmitText');
-    document.getElementById('fxTabLogin').classList.toggle('active', tab === 'login');
-    document.getElementById('fxTabRegister').classList.toggle('active', tab === 'register');
-    bar.style.transform = tab === 'register' ? 'translateX(100%)' : 'translateX(0)';
-    nameField.style.display = tab === 'register' ? 'flex' : 'none';
-    extras.style.display = tab === 'login' ? 'flex' : 'none';
-    submitText.textContent = tab === 'register' ? 'Create Account' : 'Sign In & Continue';
+    const tabLogin = document.getElementById('fxTabLogin');
+    const tabRegister = document.getElementById('fxTabRegister');
+    if (tabLogin) tabLogin.classList.toggle('active', tab === 'login');
+    if (tabRegister) tabRegister.classList.toggle('active', tab === 'register');
+    if (bar) bar.style.transform = tab === 'register' ? 'translateX(100%)' : 'translateX(0)';
+    if (nameField) nameField.style.display = tab === 'register' ? 'flex' : 'none';
+    if (extras) extras.style.display = tab === 'login' ? 'flex' : 'none';
+    if (submitText) submitText.textContent = tab === 'register' ? 'Create Account' : 'Sign In & Continue';
     const err = document.getElementById('fxPanelError');
     if (err) err.style.display = 'none';
 }
@@ -182,8 +197,8 @@ function fxHandleAuth(e) {
 
     // Basic validation
     if (!email || !password) return;
-    if (password.length < 4) {
-        errEl.textContent = 'Password must be at least 4 characters.';
+    if (password.length < 6) {
+        errEl.textContent = 'Password must be at least 6 characters.';
         errEl.style.display = 'block';
         return;
     }
@@ -194,80 +209,70 @@ function fxHandleAuth(e) {
     submitText.textContent = 'Authenticating...';
     errEl.style.display = 'none';
 
-    setTimeout(() => {
-        // Admin credentials bypass
-        if (email === 'admin@fleetx.com' && password === 'admin') {
-            const user = { name: 'Admin Operations', email, role: 'admin', joinedAt: new Date().toISOString() };
-            fxSetUser(user);
-            fxCloseAuthPanel();
-            fxInitNav();
-            fxShowToast('Welcome back, Administrator! 🛠️');
-            
-            setTimeout(() => {
-                const currentPath = window.location.pathname;
-                if (currentPath.includes('/customer/')) {
-                    window.location.href = '../admin/fleet.html';
-                } else {
-                    window.location.href = 'fleet.html';
+    if (!supabase) {
+        errEl.textContent = 'Supabase client is not initialized.';
+        errEl.style.display = 'block';
+        btn.disabled = false;
+        btn.style.opacity = '1';
+        submitText.textContent = fxCurrentTab === 'register' ? 'Register' : 'Sign In';
+        return;
+    }
+
+    if (fxCurrentTab === 'register') {
+        const name = nameEl.value.trim() || email.split('@')[0];
+        supabase.auth.signUp({
+            email: email,
+            password: password,
+            options: {
+                data: {
+                    name: name
                 }
-            }, 800);
-            return;
-        }
-
-        let name = '';
-        const users = JSON.parse(localStorage.getItem('fleetx_users') || '[]');
-        const existingUser = users.find(u => u.email === email);
-
-        if (existingUser && existingUser.active === false) {
-            errEl.textContent = 'Access Denied: Your account has been suspended by an administrator.';
+            }
+        }).then(({ data, error }) => {
+            if (error) {
+                errEl.textContent = error.message;
+                errEl.style.display = 'block';
+                btn.disabled = false;
+                btn.style.opacity = '1';
+                submitText.textContent = 'Create Account';
+            } else {
+                if (data.user && data.session === null) {
+                    errEl.textContent = 'Registration successful! Please check your email to verify your account.';
+                    errEl.style.color = 'var(--success)';
+                    errEl.style.display = 'block';
+                    btn.disabled = false;
+                    btn.style.opacity = '1';
+                    submitText.textContent = 'Create Account';
+                }
+            }
+        }).catch(err => {
+            errEl.textContent = err.message || 'An error occurred.';
             errEl.style.display = 'block';
             btn.disabled = false;
             btn.style.opacity = '1';
-            submitText.textContent = fxCurrentTab === 'register' ? 'Register' : 'Sign In';
-            return;
-        }
-
-        if (fxCurrentTab === 'register') {
-            name = (nameEl.value.trim()) || email.split('@')[0];
-            if (!existingUser) {
-                users.push({ name, email, joinedAt: new Date().toISOString(), status: 'verified', active: true });
-                localStorage.setItem('fleetx_users', JSON.stringify(users));
+            submitText.textContent = 'Create Account';
+        });
+    } else {
+        // Sign In
+        supabase.auth.signInWithPassword({
+            email: email,
+            password: password
+        }).then(({ data, error }) => {
+            if (error) {
+                errEl.textContent = error.message;
+                errEl.style.display = 'block';
+                btn.disabled = false;
+                btn.style.opacity = '1';
+                submitText.textContent = 'Sign In & Continue';
             }
-        } else {
-            if (existingUser) {
-                name = existingUser.name;
-            } else {
-                name = email.split('@')[0].replace(/[._]/g, ' ').replace(/\b\w/g, c => c.toUpperCase());
-                users.push({ name, email, joinedAt: new Date().toISOString(), status: 'verified', active: true });
-                localStorage.setItem('fleetx_users', JSON.stringify(users));
-            }
-        }
-
-        const loggedUser = users.find(u => u.email === email) || { name, email, joinedAt: new Date().toISOString() };
-        const user = { name: loggedUser.name, email: loggedUser.email, role: email === 'admin@fleetx.com' ? 'admin' : 'user', joinedAt: loggedUser.joinedAt };
-        fxSetUser(user);
-
-        const panel = document.getElementById('fxAuthPanel');
-        const intent = panel ? panel.dataset.intent : null;
-
-        fxCloseAuthPanel();
-        fxInitNav();
-
-        // Show welcome toast
-        fxShowToast(`Welcome back, ${name.split(' ')[0]}! 👋`);
-
-        // Handle post-login intent
-        if (intent === 'book') {
-            setTimeout(() => {
-                const bookSection = document.getElementById('bookingSection');
-                if (bookSection) bookSection.scrollIntoView({ behavior: 'smooth' });
-                else window.location.href = 'booking.html';
-            }, 500);
-        }
-
-        btn.disabled = false;
-        btn.style.opacity = '1';
-    }, 1000);
+        }).catch(err => {
+            errEl.textContent = err.message || 'An error occurred.';
+            errEl.style.display = 'block';
+            btn.disabled = false;
+            btn.style.opacity = '1';
+            submitText.textContent = 'Sign In & Continue';
+        });
+    }
 }
 
 function fxToggleEye(btn) {
@@ -282,6 +287,7 @@ function fxToggleEye(btn) {
     }
 }
 
+// ── Social Login ──────────────────────────────────────────────────
 function fxSocialLogin(provider) {
     const errEl = document.getElementById('fxPanelError');
     errEl.textContent = `${provider} login coming soon!`;
@@ -292,15 +298,24 @@ function fxSocialLogin(provider) {
 }
 
 function fxLogout() {
-    fxClearUser();
-    fxInitNav();
-    fxShowToast('Signed out successfully. See you soon!');
-    setTimeout(() => {
-        // Redirection on signout if they are in admin folder
-        if (window.location.pathname.includes('/admin/')) {
-            window.location.href = '../customer/index.html';
-        }
-    }, 1000);
+    if (supabase) {
+        supabase.auth.signOut().then(() => {
+            fxClearUser();
+            fxInitNav();
+            fxShowToast('Signed out successfully. See you soon!');
+            setTimeout(() => {
+                if (window.location.pathname.includes('/admin/')) {
+                    window.location.href = '../customer/index.html';
+                } else {
+                    window.location.reload();
+                }
+            }, 1000);
+        });
+    } else {
+        fxClearUser();
+        fxInitNav();
+        fxShowToast('Signed out successfully. See you soon!');
+    }
 }
 
 // ── Toast notifications ──────────────────────────────────────────
@@ -322,51 +337,21 @@ function fxShowToast(message, type = 'success') {
 }
 
 // ── Require auth guard ───────────────────────────────────────────
-// Call this on any action that requires login
 function fxRequireAuth(callback, intent = '') {
     const user = fxGetUser();
     if (user) {
         callback(user);
     } else {
         fxOpenAuthPanel({ intent });
-        // Store callback to re-invoke after login — simple flag
         window._fxPendingCallback = callback;
     }
 }
 
-// Initialize default data if not present
-function fxInitDefaultData() {
-    if (!localStorage.getItem('fleetx_users')) {
-        const defaultUsers = [
-            { name: 'Kamal Silva', email: 'kamal@gmail.com', joinedAt: '2026-06-14T08:00:00Z', status: 'verified', active: true },
-            { name: 'Nimal Karunaratne', email: 'nimal@outlook.com', joinedAt: '2026-06-15T09:30:00Z', status: 'verified', active: true },
-            { name: 'Samanthi Jayawardena', email: 'samanthi@yahoo.com', joinedAt: '2026-06-16T10:15:00Z', status: 'verified', active: true },
-            { name: 'Ruvinda Perera', email: 'ruvinda@gmail.com', joinedAt: '2026-06-17T14:20:00Z', status: 'pending', active: true }
-        ];
-        localStorage.setItem('fleetx_users', JSON.stringify(defaultUsers));
-    }
-    if (!localStorage.getItem('fleetx_bookings')) {
-        const defaultBookings = [
-            { id: 'FTX-88294', service: 'FleetX Prime', pickup: 'Colombo 03 Terminal', drop: 'BIA Airport Expressway Node', fare: 4850.00, date: '2026-06-18T08:00:00Z', status: 'completed' },
-            { id: 'FTX-87102', service: 'City Ride', pickup: 'Nugegoda Junction', drop: 'Colombo Fort Station Hub', fare: 1220.00, date: '2026-06-12T10:00:00Z', status: 'completed' },
-            { id: 'FTX-85591', service: 'Outstation Drop', pickup: 'Colombo Central', drop: 'Kandy Corporate Center', fare: 9800.00, date: '2026-05-29T14:00:00Z', status: 'cancelled' },
-            { id: 'FTX-10240', service: 'FleetX Prime', pickup: 'Audi R8 V10', drop: '14 Jun - 18 Jun', fare: 15400.00, date: '2026-06-14T11:00:00Z', status: 'pending' }
-        ];
-        localStorage.setItem('fleetx_bookings', JSON.stringify(defaultBookings));
-    }
-    if (!localStorage.getItem('fleetx_vehicles')) {
-        const defaultVehicles = [
-            { name: 'Audi R8 V10', rate: 240, category: 'SUV/Prime', status: 'Active', image: '../img/audi.jpg' },
-            { name: 'Toyota Prius', rate: 110, category: 'Sedan/City', status: 'Active', image: '../img/prius.jpg' },
-            { name: 'Mercedes-Benz E350', rate: 240, category: 'Sedan/Prime', status: 'Active', image: '../img/mercedes.jpg' }
-        ];
-        localStorage.setItem('fleetx_vehicles', JSON.stringify(defaultVehicles));
-    }
-}
+// Initialize default data if not present (No-op as we use Supabase)
+function fxInitDefaultData() {}
 
 // Auto-init on DOM ready
 document.addEventListener('DOMContentLoaded', () => {
-    fxInitDefaultData();
     fxInitNav();
     const urlParams = new URLSearchParams(window.location.search);
     if (urlParams.get('login_trigger') === 'admin') {
@@ -382,6 +367,7 @@ document.addEventListener('DOMContentLoaded', () => {
                     errEl.style.borderColor = 'rgba(255,204,0,0.2)';
                 }
             }, 200);
+        }, 100);
     }
     fxInitMobileMenu();
 });
@@ -390,7 +376,6 @@ function fxInitMobileMenu() {
     const header = document.getElementById('mainHeader') || document.querySelector('header');
     if (!header) return;
     
-    // Create the mobile menu button if it doesn't exist
     let menuBtn = document.getElementById('mobileMenuBtn');
     if (!menuBtn) {
         menuBtn = document.createElement('button');
@@ -411,11 +396,113 @@ function fxInitMobileMenu() {
         }
     });
     
-    // Close when clicking outside
     document.addEventListener('click', (e) => {
         if (nav && nav.classList.contains('open') && !nav.contains(e.target) && e.target !== menuBtn) {
             nav.classList.remove('open');
             menuBtn.innerHTML = '<i class="fas fa-ellipsis-v"></i>';
+        }
+    });
+}
+
+// Supabase Auth State Change Listener
+if (supabase) {
+    supabase.auth.onAuthStateChange(async (event, session) => {
+        if (session) {
+            const user = session.user;
+            try {
+                // Fetch user profile from public.profiles
+                let { data: profile, error } = await supabase
+                    .from('profiles')
+                    .select('*')
+                    .eq('id', user.id)
+                    .single();
+                
+                if (error || !profile) {
+                    // Try to wait a moment and query again (trigger might be executing)
+                    await new Promise(resolve => setTimeout(resolve, 800));
+                    const { data: retryProfile } = await supabase
+                        .from('profiles')
+                        .select('*')
+                        .eq('id', user.id)
+                        .single();
+                    
+                    if (retryProfile) {
+                        profile = retryProfile;
+                    } else {
+                        // Fallback profile representation
+                        profile = {
+                            id: user.id,
+                            name: user.user_metadata?.name || user.email.split('@')[0],
+                            email: user.email,
+                            role: user.email === 'admin@fleetx.com' ? 'admin' : 'user',
+                            active: true,
+                            joined_at: user.created_at
+                        };
+                    }
+                }
+                
+                if (profile.active === false) {
+                    await supabase.auth.signOut();
+                    fxClearUser();
+                    fxInitNav();
+                    fxShowToast('Access Denied: Your account has been suspended by an administrator.', 'error');
+                    if (window.location.pathname.includes('/admin/') || window.location.pathname.includes('dashboard.html')) {
+                        setTimeout(() => {
+                            window.location.href = '../customer/index.html';
+                        }, 1500);
+                    }
+                    return;
+                }
+
+                const userSession = {
+                    id: profile.id,
+                    name: profile.name,
+                    email: profile.email,
+                    role: profile.role,
+                    joinedAt: profile.joined_at
+                };
+                
+                fxSetUser(userSession);
+                fxInitNav();
+                fxCloseAuthPanel();
+
+                // Pending callbacks
+                if (window._fxPendingCallback) {
+                    const callback = window._fxPendingCallback;
+                    delete window._fxPendingCallback;
+                    callback(userSession);
+                }
+
+                // Intent handler for booking
+                const panel = document.getElementById('fxAuthPanel');
+                const intent = panel ? panel.dataset.intent : null;
+                if (intent === 'book') {
+                    setTimeout(() => {
+                        const bookSection = document.getElementById('bookingSection');
+                        if (bookSection) bookSection.scrollIntoView({ behavior: 'smooth' });
+                        else window.location.href = 'booking.html';
+                    }, 500);
+                }
+
+                // Redirect to admin panel if user is admin
+                if (profile.role === 'admin') {
+                    const currentPath = window.location.pathname;
+                    if (currentPath.includes('/customer/') && !currentPath.includes('index.html')) {
+                        setTimeout(() => {
+                            window.location.href = '../admin/fleet.html';
+                        }, 800);
+                    } else if (!currentPath.includes('/admin/') && !currentPath.includes('index.html')) {
+                        setTimeout(() => {
+                            window.location.href = 'admin/fleet.html';
+                        }, 800);
+                    }
+                }
+            } catch (err) {
+                console.error('Error in auth state sync:', err);
+            }
+        } else {
+            fxClearUser();
+            fxInitNav();
         }
     });
 }
