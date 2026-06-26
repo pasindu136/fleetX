@@ -607,6 +607,7 @@
                     .order('date', { ascending: false });
 
                 if (error) throw error;
+                window._fleetBookings = bookings;
 
                 const bookingsBody = document.getElementById('bookingsTableBody');
                 bookingsBody.innerHTML = '';
@@ -730,11 +731,50 @@
                 if (error) throw error;
 
                 fxShowToast(`Dispatch Request ${newStatus === 'confirmed' ? 'Approved' : 'Rejected'}!`);
+
+                if (newStatus === 'confirmed') {
+                    const booking = window._fleetBookings ? window._fleetBookings.find(b => b.id === id) : null;
+                    if (booking && booking.user_email) {
+                        sendResendConfirmation(booking);
+                    }
+                }
+
                 renderBookings();
                 renderOverview();
             } catch (err) {
                 console.error(err);
                 fxShowToast('Failed to update booking: ' + (err.message || err), 'error');
+            }
+        }
+
+        async function sendResendConfirmation(booking) {
+            const passengerEmail = booking.user_email;
+            if (!passengerEmail) return;
+
+            fxShowToast('Connecting to dispatch server for email delivery...');
+
+            try {
+                const response = await fetch('/api/send-email', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ booking: booking })
+                });
+
+                const data = await response.json();
+                if (response.ok && data.success) {
+                    fxShowToast('Confirmation email sent successfully to ' + passengerEmail + '! ✉️');
+                } else {
+                    console.warn('Backend email response:', data);
+                    const errMsg = data.error?.message || data.error || 'Server rejected email';
+                    if (typeof errMsg === 'string' && errMsg.includes('only send testing emails')) {
+                        fxShowToast('Resend Sandbox: Free key only delivers to your own verified email.', 'info');
+                    } else {
+                        fxShowToast('Email notice: ' + (typeof errMsg === 'string' ? errMsg : JSON.stringify(errMsg)), 'info');
+                    }
+                }
+            } catch (err) {
+                console.error('Email dispatch error:', err);
+                fxShowToast('Note: Email sending requires live Vercel deployment (/api/send-email).', 'info');
             }
         }
 
