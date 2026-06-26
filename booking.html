@@ -213,6 +213,16 @@
                         </div>
                     </div>
 
+                    <!-- Contact Number -->
+                    <div style="margin-top:20px;">
+                        <div style="font-size:12px;font-weight:700;text-transform:uppercase;letter-spacing:1.5px;color:var(--text-muted);margin-bottom:12px;">
+                            <i class="fas fa-phone-alt" style="margin-right:6px;color:var(--accent);"></i>Contact Number (For SMS Alerts)
+                        </div>
+                        <div style="position:relative;">
+                            <input type="tel" id="inputPhone" placeholder="077 123 4567 (Auto +94 format)" required style="width:100%;padding:13px 14px;background:rgba(20,20,20,0.8);border:1px solid var(--border);border-radius:10px;color:var(--text-main);font-size:14px;font-family:var(--font-main);outline:none;transition:all 0.3s ease;color-scheme:dark;">
+                        </div>
+                    </div>
+
                     <!-- Notes -->
                     <div style="margin-top:20px;">
                         <textarea id="inputNotes" rows="3" placeholder="Any special requests or notes for the driver..." style="width:100%;padding:14px;background:rgba(20,20,20,0.8);border:1px solid var(--border);border-radius:10px;color:var(--text-main);font-size:14px;font-family:var(--font-main);resize:none;outline:none;transition:all 0.3s ease;"></textarea>
@@ -647,9 +657,22 @@
         function handleBookNow() {
             const pickup = document.getElementById('inputPickup').value.trim();
             const drop = document.getElementById('inputDrop').value.trim();
+            const rawPhone = document.getElementById('inputPhone').value.trim();
 
             if (!selectedTier) { fxShowToast('Please select a fleet tier first.', 'error'); return; }
             if (!pickup || !drop) { fxShowToast('Please enter pickup and destination.', 'error'); return; }
+            if (!rawPhone) { fxShowToast('Please enter your contact number for SMS updates.', 'error'); return; }
+
+            // Auto format SL Phone number (e.g. 077 123 4567 -> +94771234567)
+            let digits = rawPhone.replace(/\D/g, '');
+            if (digits.startsWith('0')) digits = digits.substring(1);
+            if (digits.startsWith('94')) digits = digits.substring(2);
+
+            if (digits.length !== 9) {
+                fxShowToast('Please enter a valid 10-digit Sri Lankan mobile number (e.g. 077 123 4567).', 'error');
+                return;
+            }
+            const formattedPhone = '+94' + digits;
 
             const date = document.getElementById('inputDate').value;
             const time = document.getElementById('inputTime').value;
@@ -657,17 +680,18 @@
 
             // Require auth before booking
             fxRequireAuth((user) => {
-                proceedToBook(user, pickup, drop);
+                proceedToBook(user, pickup, drop, formattedPhone);
             }, 'book');
         }
 
-        async function proceedToBook(user, pickup, drop) {
+        async function proceedToBook(user, pickup, drop, phone) {
             const btn = document.getElementById('bookNowBtn');
             btn.disabled = true;
             btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Dispatching...';
 
             const bookingId = 'FTX-' + Math.floor(10000 + Math.random() * 90000);
             const total = selectedBase + (simDistance * selectedRate) + 50;
+            const pickupWithPhone = `${pickup} [Tel: ${phone || 'N/A'}]`;
 
             if (!supabase) {
                 fxShowToast('Database connection offline.', 'error');
@@ -679,7 +703,7 @@
             if (user.id === '11111111-1111-4111-8111-111111111111') {
                 document.getElementById('confirmId').textContent = bookingId;
                 document.getElementById('confService').textContent = selectedTierName;
-                document.getElementById('confPickup').textContent = pickup;
+                document.getElementById('confPickup').textContent = pickupWithPhone;
                 document.getElementById('confDrop').textContent = drop;
                 document.getElementById('confFare').textContent = `LKR ${total.toLocaleString('en-US', { minimumFractionDigits: 2 })}`;
                 document.getElementById('confirmOverlay').classList.add('open');
@@ -696,7 +720,7 @@
                         user_id: user.id,
                         user_email: user.email,
                         service: selectedTierName,
-                        pickup: pickup,
+                        pickup: pickupWithPhone,
                         drop: drop,
                         fare: total,
                         date: new Date().toISOString(),
