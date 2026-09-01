@@ -4,8 +4,10 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta name="description" content="FleetX Terminal Login — Sign in or register for Sri Lanka's premium digital transit platform.">
+    <meta name="description"
+        content="FleetX Terminal Login — Sign in or register for Sri Lanka's premium digital transit platform.">
     <title>FleetX | Passenger Terminal Authorization</title>
+    <link rel="icon" type="image/x-icon" href="../img/hed-logo.png">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link rel="stylesheet" href="css/style.css">
     <style>
@@ -45,8 +47,15 @@
         }
 
         @keyframes pulseGlow {
-            0% { transform: scale(1); opacity: 0.7; }
-            100% { transform: scale(1.2); opacity: 1; }
+            0% {
+                transform: scale(1);
+                opacity: 0.7;
+            }
+
+            100% {
+                transform: scale(1.2);
+                opacity: 1;
+            }
         }
 
         .auth-card {
@@ -304,8 +313,14 @@
         }
 
         @media (max-width: 500px) {
-            .auth-card { padding: 36px 24px; border-radius: 16px; }
-            .social-btn-group { grid-template-columns: 1fr; }
+            .auth-card {
+                padding: 36px 24px;
+                border-radius: 16px;
+            }
+
+            .social-btn-group {
+                grid-template-columns: 1fr;
+            }
         }
     </style>
 </head>
@@ -345,8 +360,10 @@
 
             <!-- TABS -->
             <div class="auth-tab-box">
-                <button type="button" class="auth-tab-btn active" id="tabBtnLogin" onclick="switchAuthMode('login')">Sign In</button>
-                <button type="button" class="auth-tab-btn" id="tabBtnRegister" onclick="switchAuthMode('register')">Register</button>
+                <button type="button" class="auth-tab-btn active" id="tabBtnLogin"
+                    onclick="switchAuthMode('login')">Sign In</button>
+                <button type="button" class="auth-tab-btn" id="tabBtnRegister"
+                    onclick="switchAuthMode('register')">Register</button>
             </div>
 
             <!-- MESSAGE BANNER -->
@@ -366,17 +383,22 @@
 
                 <div class="auth-input-container">
                     <i class="fas fa-lock"></i>
-                    <input type="password" id="inpPassword" placeholder="Password (min. 6 characters)" required autocomplete="current-password">
-                    <button type="button" class="auth-eye-btn" onclick="togglePasswordVisibility('inpPassword', this)" aria-label="Toggle password">
+                    <input type="password" id="inpPassword" placeholder="Password (min. 6 characters)" required
+                        autocomplete="current-password">
+                    <button type="button" class="auth-eye-btn" onclick="togglePasswordVisibility('inpPassword', this)"
+                        aria-label="Toggle password">
                         <i class="fas fa-eye"></i>
                     </button>
                 </div>
 
-                <div id="loginExtrasRow" style="display: flex; justify-content: space-between; align-items: center; margin: 4px 0 22px; font-size: 13px;">
+                <div id="loginExtrasRow"
+                    style="display: flex; justify-content: space-between; align-items: center; margin: 4px 0 22px; font-size: 13px;">
                     <label style="display: flex; align-items: center; gap: 8px; color: #888; cursor: pointer;">
                         <input type="checkbox" style="accent-color: var(--accent);"> Remember session
                     </label>
-                    <a href="#" onclick="showAuthBanner('Please contact administrator at ops@fleetx.lk for password recovery.', 'error'); return false;" style="color: var(--accent); text-decoration: none; font-weight: 600;">Forgot password?</a>
+                    <a href="#"
+                        onclick="showAuthBanner('Please contact administrator at ops@fleetx.lk for password recovery.', 'error'); return false;"
+                        style="color: var(--accent); text-decoration: none; font-weight: 600;">Forgot password?</a>
                 </div>
 
                 <button type="submit" class="auth-submit-btn" id="btnSubmit">
@@ -388,16 +410,19 @@
             <div class="auth-divider"><span>Or continue via</span></div>
 
             <div class="social-btn-group">
-                <button type="button" class="social-auth-btn" onclick="showAuthBanner('Google SSO OAuth provider integration active soon.', 'error')">
+                <button type="button" class="social-auth-btn"
+                    onclick="showAuthBanner('Google SSO OAuth provider integration active soon.', 'error')">
                     <i class="fab fa-google" style="color: #ea4335; font-size: 16px;"></i> Google
                 </button>
-                <button type="button" class="social-auth-btn" onclick="showAuthBanner('Facebook SSO OAuth provider integration active soon.', 'error')">
+                <button type="button" class="social-auth-btn"
+                    onclick="showAuthBanner('Facebook SSO OAuth provider integration active soon.', 'error')">
                     <i class="fab fa-facebook-f" style="color: #1877f2; font-size: 16px;"></i> Facebook
                 </button>
             </div>
 
             <div class="auth-footer-note" id="authBottomNote">
-                New passenger node? <a href="#" onclick="switchAuthMode('register'); return false;">Create free account</a>
+                New passenger node? <a href="#" onclick="switchAuthMode('register'); return false;">Create free
+                    account</a>
             </div>
         </div>
     </main>

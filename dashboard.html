@@ -1,9 +1,11 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>FleetX Terminal | Passenger Control Dashboard</title>
+    <title>FleetX | Passenger Control Dashboard</title>
+    <link rel="icon" type="image/x-icon" href="../img/hed-logo.png">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
     <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
@@ -18,19 +20,23 @@
             justify-content: center;
             height: 380px !important;
         }
+
         #dashboardMap {
             width: 100%;
             height: 100%;
             z-index: 1;
         }
+
         /* Leaflet custom dark theme overrides for popups */
-        .leaflet-popup-content-wrapper, .leaflet-popup-tip {
+        .leaflet-popup-content-wrapper,
+        .leaflet-popup-tip {
             background: #111 !important;
             color: #fff !important;
             border: 1px solid var(--border);
         }
     </style>
 </head>
+
 <body>
 
     <div class="page-loader" id="pageLoader">
@@ -39,7 +45,8 @@
     </div>
 
     <header id="mainHeader">
-        <a href="index.html" class="logo" style="display: flex; align-items: center; gap: 10px; cursor: pointer; text-decoration: none;">
+        <a href="index.html" class="logo"
+            style="display: flex; align-items: center; gap: 10px; cursor: pointer; text-decoration: none;">
             <img src="img/hed-logo.png" alt="FleetX Logo" style="height: 35px; width: auto; object-fit: contain;">
             FLEET<span>X</span>
         </a>
@@ -47,10 +54,13 @@
             <ul>
                 <li><a href="index.html">Home</a></li>
                 <li><a href="booking.html">Services</a></li>
-                <li><a href="index.html#how-it-works">How It Works</a></li>
+                <li><a href="index.html#how-it-works" class="active">How It Works</a></li>
                 <li><a href="about.html">About</a></li>
                 <li id="navAuthArea">
-                    <a href="#" onclick="fxOpenAuthPanel(); return false;" class="fx-login-trigger" id="fxLoginBtn" style="padding:9px 22px;font-size:13px;display:flex;align-items:center;gap:8px;text-decoration:none; background: var(--accent, #ffcc00); color: #000; font-weight: 700; border-radius: 8px; transition: opacity 0.2s, transform 0.2s;" onmouseover="this.style.opacity='0.9'; this.style.transform='translateY(-1px)';" onmouseout="this.style.opacity='1'; this.style.transform='translateY(0)';">
+                    <a href="#" onclick="fxOpenAuthPanel(); return false;" class="fx-login-trigger" id="fxLoginBtn"
+                        style="padding:9px 22px;font-size:13px;display:flex;align-items:center;gap:8px;text-decoration:none; background: var(--accent, #ffcc00); color: #000; font-weight: 700; border-radius: 8px; transition: opacity 0.2s, transform 0.2s;"
+                        onmouseover="this.style.opacity='0.9'; this.style.transform='translateY(-1px)';"
+                        onmouseout="this.style.opacity='1'; this.style.transform='translateY(0)';">
                         <i class="fas fa-lock" style="font-size:11px;"></i> Login
                     </a>
                 </li>
@@ -59,23 +69,29 @@
     </header>
 
     <main class="dashboard-container" style="padding: 40px 8% 80px 8%;">
-        
-        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; border-bottom: 1px solid var(--border); padding-bottom: 20px;">
+
+        <div
+            style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; border-bottom: 1px solid var(--border); padding-bottom: 20px;">
             <div>
-                <h2 style="font-weight: 900; font-size: 28px; letter-spacing: 0.5px;">PASSENGER <span>CONTROL HUB</span></h2>
-                <p style="color: var(--text-muted); font-size: 13.5px; margin-top: 4px;">Welcome back, Client Node. Initialize real-time transit telemetry requests below.</p>
+                <h2 style="font-weight: 900; font-size: 28px; letter-spacing: 0.5px;">PASSENGER <span>CONTROL HUB</span>
+                </h2>
+                <p style="color: var(--text-muted); font-size: 13.5px; margin-top: 4px;">Welcome back, Client.
+                    Initialize real-time transit telemetry requests below.</p>
             </div>
-            <div style="text-align: right; background: var(--bg-card); padding: 10px 20px; border-radius: 6px; border: 1px solid var(--border);">
-                <span style="font-size: 11px; color: var(--accent); font-weight: 700; text-transform: uppercase; display:block;">Active Node Token</span>
+            <div
+                style="text-align: right; background: var(--bg-card); padding: 10px 20px; border-radius: 6px; border: 1px solid var(--border);">
+                <span
+                    style="font-size: 11px; color: var(--accent); font-weight: 700; text-transform: uppercase; display:block;">Active
+                 User Code</span>
                 <span style="font-size: 13px; font-weight: 600; font-family: monospace;">FX-99284-LK</span>
             </div>
         </div>
 
         <div class="db-grid-container">
-            
+
             <div class="db-panel-card">
                 <h3><i class="fas fa-sliders-h"></i> Dispatch Parameters</h3>
-                
+
                 <form id="dashboardBookingForm">
                     <div class="fleet-selector-group">
                         <div class="fleet-option selected" onclick="selectFleet(this, 'city', 110)">
@@ -94,12 +110,14 @@
 
                     <div class="input-group">
                         <input type="text" id="dbTxtPickup" placeholder=" " required>
-                        <label for="dbTxtPickup"><i class="fas fa-map-marker-alt" style="color:var(--accent); margin-right:5px;"></i> Pickup Address / Terminal</label>
+                        <label for="dbTxtPickup"><i class="fas fa-map-marker-alt"
+                                style="color:var(--accent); margin-right:5px;"></i> Pickup Address / Terminal</label>
                     </div>
 
                     <div class="input-group">
                         <input type="text" id="dbTxtDrop" placeholder=" " required>
-                        <label for="dbTxtDrop"><i class="fas fa-flag-checkered" style="color:#ff4757; margin-right:5px;"></i> Destination Vector</label>
+                        <label for="dbTxtDrop"><i class="fas fa-flag-checkered"
+                                style="color:#ff4757; margin-right:5px;"></i> Destination</label>
                     </div>
 
                     <div class="fare-receipt-box" id="fareInvoiceBox">
@@ -111,26 +129,32 @@
                             <span>Computed Vector Distance:</span>
                             <span id="invoiceDistance">12.5 KM</span>
                         </div>
-                        <div class="receipt-line" style="border-top: 1px solid var(--border); padding-top: 10px; margin-top: 10px; color: #ffffff; font-weight: 700;">
+                        <div class="receipt-line"
+                            style="border-top: 1px solid var(--border); padding-top: 10px; margin-top: 10px; color: #ffffff; font-weight: 700;">
                             <span>Guaranteed Flat Fare:</span>
                             <span id="invoiceTotal" style="color: var(--accent); font-size: 16px;">LKR 1,525.00</span>
                         </div>
                     </div>
 
-                    <button type="button" id="btnCalculateFare" class="btn-secondary" style="width: 100%; margin-bottom: 12px; padding: 14px;">Compute Dynamic Fare</button>
-                    <button type="submit" id="btnRequestDispatch" class="btn-primary" style="width: 100%; padding: 14px; display: none;">Request Immediate Dispatch</button>
+                    <button type="button" id="btnCalculateFare" class="btn-secondary"
+                        style="width: 100%; margin-bottom: 12px; padding: 14px;">Book Ride</button>
+                    <button type="submit" id="btnRequestDispatch" class="btn-primary"
+                        style="width: 100%; padding: 14px; display: none;">Confirm Booking</button>
                 </form>
             </div>
 
             <div class="db-panel-card">
                 <h3><i class="fas fa-satellite-dish"></i> Real-time Transit Telemetry Map</h3>
-                
+
                 <div class="map-viewport-wrapper">
                     <div id="dashboardMap"></div>
-                    
-                    <div id="mapStatusMessage" style="position: absolute; bottom: 15px; left: 15px; right: 15px; z-index: 1000; background: rgba(10,10,10,0.95); border: 1px solid var(--border); padding: 10px 15px; border-radius: 6px; text-align: center; display: flex; align-items: center; justify-content: center; gap: 8px; box-shadow: 0 4px 15px rgba(0,0,0,0.5);">
+
+                    <div id="mapStatusMessage"
+                        style="position: absolute; bottom: 15px; left: 15px; right: 15px; z-index: 1000; background: rgba(10,10,10,0.95); border: 1px solid var(--border); padding: 10px 15px; border-radius: 6px; text-align: center; display: flex; align-items: center; justify-content: center; gap: 8px; box-shadow: 0 4px 15px rgba(0,0,0,0.5);">
                         <i class="fas fa-map-signs" style="color: var(--accent); font-size: 15px;"></i>
-                        <span style="font-size: 11.5px; color: var(--text-muted); font-weight: 500;" id="mapStatusText">Click on map to set Pickup (green marker) and Destination (red marker).</span>
+                        <span style="font-size: 11.5px; color: var(--text-muted); font-weight: 500;"
+                            id="mapStatusText">Click on map to set Pickup (green marker) and Destination (red
+                            marker).</span>
                     </div>
                 </div>
             </div>
@@ -139,7 +163,7 @@
 
         <div class="db-panel-card history-panel-section">
             <h3><i class="fas fa-history"></i> Logged Transit History Records</h3>
-            
+
             <div style="overflow-x: auto;">
                 <table class="data-matrix-table">
                     <thead>
@@ -156,7 +180,8 @@
                         <tr>
                             <td style="font-family: monospace; font-weight: 700; color: #ffffff;">#FTX-88294</td>
                             <td>June 18, 2026</td>
-                            <td><i class="fas fa-car-side" style="color:var(--accent); margin-right: 5px;"></i> FleetX Prime</td>
+                            <td><i class="fas fa-car-side" style="color:var(--accent); margin-right: 5px;"></i> FleetX
+                                Prime</td>
                             <td>Colombo 03 Terminal &rarr; BIA Airport Expressway Node</td>
                             <td style="font-weight: 700; color: #ffffff;">LKR 4,850.00</td>
                             <td><span class="status-badge completed">Completed</span></td>
@@ -164,7 +189,8 @@
                         <tr>
                             <td style="font-family: monospace; font-weight: 700; color: #ffffff;">#FTX-87102</td>
                             <td>June 12, 2026</td>
-                            <td><i class="fas fa-car" style="color:var(--accent); margin-right: 5px;"></i> City Ride</td>
+                            <td><i class="fas fa-car" style="color:var(--accent); margin-right: 5px;"></i> City Ride
+                            </td>
                             <td>Nugegoda Junction &rarr; Colombo Fort Station Hub</td>
                             <td style="font-weight: 700; color: #ffffff;">LKR 1,220.00</td>
                             <td><span class="status-badge completed">Completed</span></td>
@@ -172,7 +198,8 @@
                         <tr>
                             <td style="font-family: monospace; font-weight: 700; color: #ffffff;">#FTX-85591</td>
                             <td>May 29, 2026</td>
-                            <td><i class="fas fa-route" style="color:var(--accent); margin-right: 5px;"></i> Outstation</td>
+                            <td><i class="fas fa-route" style="color:var(--accent); margin-right: 5px;"></i> Outstation
+                            </td>
                             <td>Colombo Central &rarr; Kandy Corporate Center</td>
                             <td style="font-weight: 700; color: #ffffff;">LKR 0.00</td>
                             <td><span class="status-badge cancelled">Cancelled</span></td>
@@ -188,9 +215,11 @@
         <div class="footer-grid">
             <div class="footer-col">
                 <div class="logo" style="display: flex; align-items: center; gap: 10px; margin-bottom: 20px;">
-                    <img src="img/hed-logo.png" alt="FleetX Logo" style="height: 32px; width: auto; object-fit: contain;">FLEET<span>X</span>
+                    <img src="img/hed-logo.png" alt="FleetX Logo"
+                        style="height: 32px; width: auto; object-fit: contain;">FLEET<span>X</span>
                 </div>
-                <p>Sri Lanka's premier digital transit infrastructure, supplying executive reliability, premium comfort, and completely transparent, fixed-tariff passenger travel.</p>
+                <p>Sri Lanka's premier digital transit infrastructure, supplying executive reliability, premium comfort,
+                    and completely transparent, fixed-tariff passenger travel.</p>
             </div>
             <div class="footer-col">
                 <h4>Our Fleet</h4>
@@ -204,7 +233,9 @@
                 <h4>Support & Info</h4>
                 <ul>
                     <li><a href="#">About Company</a></li>
-                    <li><a href="#" onclick="fxShowToast('Driver Portal integration coming soon!', 'info'); return false;">Driver Portal</a></li>
+                    <li><a href="#"
+                            onclick="fxShowToast('Driver Portal integration coming soon!', 'info'); return false;">Driver
+                            Portal</a></li>
                     <li><a href="#">Terms of Service</a></li>
                 </ul>
             </div>
@@ -268,7 +299,7 @@
             const latlng = e.latlng;
             const pickupInput = document.getElementById('dbTxtPickup');
             const dropInput = document.getElementById('dbTxtDrop');
-            
+
             if (!pickupMarker) {
                 pickupMarker = L.marker(latlng, {
                     draggable: true,
@@ -281,7 +312,7 @@
                         shadowSize: [41, 41]
                     })
                 }).addTo(map).bindPopup("<b>Pickup</b>").openPopup();
-                
+
                 pickupMarker.on('dragend', updateRouteAndDistance);
                 pickupInput.value = `Point (${latlng.lat.toFixed(4)}, ${latlng.lng.toFixed(4)})`;
                 updateRouteAndDistance();
@@ -297,7 +328,7 @@
                         shadowSize: [41, 41]
                     })
                 }).addTo(map).bindPopup("<b>Destination</b>").openPopup();
-                
+
                 dropMarker.on('dragend', updateRouteAndDistance);
                 dropInput.value = `Point (${latlng.lat.toFixed(4)}, ${latlng.lng.toFixed(4)})`;
                 updateRouteAndDistance();
@@ -331,7 +362,7 @@
         function updateRouteAndDistance() {
             const pickupInput = document.getElementById('dbTxtPickup');
             const dropInput = document.getElementById('dbTxtDrop');
-            
+
             if (!pickupMarker || !dropMarker) {
                 if (routePolyline) {
                     map.removeLayer(routePolyline);
@@ -362,19 +393,19 @@
             }
 
             document.getElementById('mapStatusText').textContent = `Route path locked: ${mapDistance} KM. Click again to reset.`;
-            
-            if(document.getElementById('fareInvoiceBox').style.display === 'block') {
+
+            if (document.getElementById('fareInvoiceBox').style.display === 'block') {
                 computeTariffMatrix();
             }
         }
 
         // Smooth Preloader Initialization
         const loader = document.getElementById('pageLoader');
-        window.addEventListener('load', () => { 
-            setTimeout(() => { loader.classList.add('fade-out'); }, 400); 
+        window.addEventListener('load', () => {
+            setTimeout(() => { loader.classList.add('fade-out'); }, 400);
         });
 
-        let selectedRatePerKM = 110; 
+        let selectedRatePerKM = 110;
         let selectedFleetName = "City Ride";
 
         function selectFleet(element, type, rate) {
@@ -382,8 +413,8 @@
             element.classList.add('selected');
             selectedRatePerKM = rate;
             selectedFleetName = element.querySelector('span').innerText;
-            
-            if(document.getElementById('fareInvoiceBox').style.display === 'block') {
+
+            if (document.getElementById('fareInvoiceBox').style.display === 'block') {
                 computeTariffMatrix();
             }
         }
@@ -406,19 +437,19 @@
         function computeTariffMatrix() {
             const basePrice = 150;
             let simulatedDistance = mapDistance;
-            
+
             if (!pickupMarker || !dropMarker) {
                 const pickup = document.getElementById('dbTxtPickup').value.trim();
                 const drop = document.getElementById('dbTxtDrop').value.trim();
                 const seed = (pickup.length * 3 + drop.length * 5) % 30;
                 simulatedDistance = +(4.2 + seed + Math.random() * 2).toFixed(1);
             }
-            
+
             const computedTotal = (basePrice + (simulatedDistance * selectedRatePerKM));
 
             document.getElementById('invoiceBase').innerText = `LKR ${basePrice.toFixed(2)}`;
             document.getElementById('invoiceDistance').innerText = `${simulatedDistance} KM`;
-            document.getElementById('invoiceTotal').innerText = `LKR ${computedTotal.toLocaleString('en-US', {minimumFractionDigits: 2, maximumFractionDigits: 2})}`;
+            document.getElementById('invoiceTotal').innerText = `LKR ${computedTotal.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`;
 
             invoiceBox.style.display = 'block';
             btnReq.style.display = 'block';
@@ -426,11 +457,11 @@
 
             const mapMsg = document.getElementById('mapStatusMessage');
             const mapPulse = document.getElementById('mapPulseNode');
-            
+
             mapMsg.innerHTML = `<i class="fas fa-spinner fa-spin" style="color:var(--accent); font-size:20px; margin-bottom:10px; display:block;"></i>
                                 <span style="color:#ffffff; font-weight:600;">Locking GPS Vectors...</span><br>
                                 <span style="font-size:11px; color:var(--text-muted);">Syncing Route from ${document.getElementById('dbTxtPickup').value}</span>`;
-            
+
             setTimeout(() => {
                 mapMsg.innerHTML = `<i class="fas fa-check-circle" style="color:var(--success); font-size:22px; margin-bottom:10px; display:block;"></i>
                                     <span style="color:#ffffff; font-weight:700;">Path Locked Successfully</span><br>
@@ -522,11 +553,11 @@
                     const tr = document.createElement('tr');
                     const dateObj = new Date(b.date);
                     const formattedDate = dateObj.toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' });
-                    
+
                     let icon = 'fas fa-car';
                     if (b.service.includes('Prime')) icon = 'fas fa-car-side';
                     if (b.service.includes('Outstation')) icon = 'fas fa-route';
-                    
+
                     let statusClass = 'completed';
                     if (b.status === 'pending') statusClass = 'pending';
                     if (b.status === 'cancelled' || b.status === 'rejected') statusClass = 'cancelled';
@@ -549,4 +580,5 @@
         }
     </script>
 </body>
+
 </html>

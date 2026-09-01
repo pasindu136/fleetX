@@ -542,7 +542,8 @@ function fxInitMobileMenu() {
         menuBtn = document.createElement('button');
         menuBtn.id = 'mobileMenuBtn';
         menuBtn.className = 'mobile-menu-btn';
-        menuBtn.innerHTML = '<i class="fas fa-ellipsis-v"></i>';
+        menuBtn.setAttribute('aria-label', 'Open menu');
+        menuBtn.innerHTML = '<i class="fas fa-bars"></i>';
         header.appendChild(menuBtn);
     }
     
@@ -553,14 +554,16 @@ function fxInitMobileMenu() {
         if (nav) {
             nav.classList.toggle('open');
             const isOpen = nav.classList.contains('open');
-            menuBtn.innerHTML = isOpen ? '<i class="fas fa-times"></i>' : '<i class="fas fa-ellipsis-v"></i>';
+            menuBtn.innerHTML = isOpen ? '<i class="fas fa-times"></i>' : '<i class="fas fa-bars"></i>';
+            menuBtn.setAttribute('aria-label', isOpen ? 'Close menu' : 'Open menu');
         }
     });
     
     document.addEventListener('click', (e) => {
         if (nav && nav.classList.contains('open') && !nav.contains(e.target) && e.target !== menuBtn) {
             nav.classList.remove('open');
-            menuBtn.innerHTML = '<i class="fas fa-ellipsis-v"></i>';
+            menuBtn.innerHTML = '<i class="fas fa-bars"></i>';
+            menuBtn.setAttribute('aria-label', 'Open menu');
         }
     });
 }
